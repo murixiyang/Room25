@@ -1,2 +1,2 @@
 # Room25
-A web simulation of board game Room25
+A web application simulating the board game Room25
