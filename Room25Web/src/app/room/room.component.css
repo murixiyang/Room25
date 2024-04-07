@@ -1,0 +1,30 @@
+.room {
+  width: 100px; /* Adjust as needed */
+  height: 100px; /* Adjust as needed */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid black; /* Border for visualization */
+  font-size: 14px; /* Adjust as needed */
+  font-weight: bold;
+}
+
+.green {
+  background-color: lightgreen;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
+}
+
+.blue {
+  background-color: lightblue;
+}
+
+.index {
+  color: black; /* Text color */
+}

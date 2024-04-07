@@ -1,9 +1,9 @@
-<p>room works!</p>
-
-<div class="room" [ngClass]="lockStatus">
-  <span>Dangerous Level: {{ dangerousLevel }}</span
-  ><br />
-  <span>X-Index: {{ xIndex }}, Y-Index: {{ yIndex }}</span
-  ><br />
-  <span>{{ lockStatus }}</span>
+<div
+  class="room"
+  [class.green]="dangerousLevel === 'Green'"
+  [class.yellow]="dangerousLevel === 'Yellow'"
+  [class.red]="dangerousLevel === 'Red'"
+  [class.blue]="dangerousLevel === 'Blue'"
+>
+  <span class="index">{{ xIndex }},{{ yIndex }}</span>
 </div>
