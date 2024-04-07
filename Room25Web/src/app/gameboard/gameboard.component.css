@@ -1,0 +1,8 @@
+.game-board {
+  display: flex;
+  max-width: 800px;
+}
+
+.room {
+  margin: 10px;
+}

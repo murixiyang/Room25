@@ -1,11 +1,14 @@
 import { Component, Input } from '@angular/core';
+
+import { NgClass } from '@angular/common';
+
 import { DangerousLevel } from '../dangerous-level.enum';
 import { LockStatus } from '../lock-status.enum';
 
 @Component({
   selector: 'app-room',
   standalone: true,
-  imports: [],
+  imports: [NgClass],
   templateUrl: './room.component.html',
   styleUrl: './room.component.css',
 })
