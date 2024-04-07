@@ -1,0 +1,6 @@
+.player-indicator {
+  width: 20px; /* Adjust circle size as needed */
+  height: 20px; /* Adjust circle size as needed */
+  border-radius: 50%; /* Make the element a circle */
+  background-color: blue; /* Change color as needed */
+}

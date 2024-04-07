@@ -1,7 +1,11 @@
 <div class="game-board">
   <div *ngFor="let row of rows">
     <div *ngFor="let col of cols" class="room">
-      <app-room [xIndex]="col" [yIndex]="row"></app-room>
+      <app-room [xIndex]="col" [yIndex]="row">
+        <app-player
+          *ngIf="col === player.xIndex && row === player.yIndex"
+        ></app-player>
+      </app-room>
     </div>
   </div>
 </div>
