@@ -10,8 +10,8 @@ import { Action } from '../action.enum';
 })
 export class PlayerComponent {
   @Input() name: string = 'Frank';
-  @Input() xIndex: number = 0;
-  @Input() yIndex: number = 0;
+  @Input() rowIndex: number = 2;
+  @Input() colIndex: number = 2;
   @Input() survived: boolean = true;
 
   @Input() action1!: Action;

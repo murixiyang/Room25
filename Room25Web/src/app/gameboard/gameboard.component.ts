@@ -15,4 +15,29 @@ export class GameboardComponent {
   rows: number[] = [0, 1, 2, 3, 4];
   cols: number[] = [0, 1, 2, 3, 4];
   player = new PlayerComponent();
+
+  movePlayer(direction: string): void {
+    switch (direction) {
+      case 'up':
+        if (this.player.colIndex > 0) {
+          this.player.colIndex--;
+        }
+        break;
+      case 'down':
+        if (this.player.colIndex < this.rows.length - 1) {
+          this.player.colIndex++;
+        }
+        break;
+      case 'left':
+        if (this.player.rowIndex > 0) {
+          this.player.rowIndex--;
+        }
+        break;
+      case 'right':
+        if (this.player.rowIndex < this.cols.length - 1) {
+          this.player.rowIndex++;
+        }
+        break;
+    }
+  }
 }
