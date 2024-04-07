@@ -1,7 +1,11 @@
 <div class="game-board">
   <div *ngFor="let row of rows">
     <div *ngFor="let col of cols" class="room">
-      <app-room [rowIndex]="row" [colIndex]="col">
+      <app-room
+        [rowIndex]="row"
+        [colIndex]="col"
+        [dangerousLevel]="roomDistribution[row * cols.length + col]"
+      >
         <app-player
           *ngIf="row === player.rowIndex && col === player.colIndex"
         ></app-player>
