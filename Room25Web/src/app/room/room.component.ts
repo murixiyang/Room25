@@ -23,6 +23,7 @@ import { LockStatus } from '../lock-status.enum';
 export class RoomComponent {
   @Input() dangerousLevel: DangerousLevel = DangerousLevel.GREEN;
   @Input() lockStatus: LockStatus = LockStatus.AVAILABLE;
+  @Input() id: number = 0;
   @Input() rowIndex: number = 0;
   @Input() colIndex: number = 0;
 

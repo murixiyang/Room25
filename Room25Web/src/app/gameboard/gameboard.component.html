@@ -5,6 +5,7 @@
         <app-room
           [rowIndex]="row"
           [colIndex]="col"
+          [id]="localFromIndexToID(row, col)"
           [dangerousLevel]="roomDistribution[localFromIndexToID(row, col)]"
           [revealed]="roomRevealed[localFromIndexToID(row, col)]"
           (roomClicked)="handleRoomClicked($event)"

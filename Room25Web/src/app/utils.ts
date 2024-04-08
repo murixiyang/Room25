@@ -6,5 +6,5 @@ export function shuffle<T>(array: T[]): void {
 }
 
 export function fromIndexToID(rowIndex: number, colIndex: number): number {
-  return rowIndex * 5 + colIndex;
+  return colIndex * 5 + rowIndex;
 }

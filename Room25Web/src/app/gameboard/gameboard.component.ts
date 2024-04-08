@@ -38,7 +38,7 @@ export class GameboardComponent {
     ...Array(25).fill(DangerousLevel.GREEN),
   ];
 
-  roomRevealed: boolean[] = [...Array(25).fill(false)];
+  roomRevealed: boolean[] = [...Array(25).fill(true)];
 
   constructor() {
     // Randomly place rooms
