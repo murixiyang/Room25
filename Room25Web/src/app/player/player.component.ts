@@ -19,4 +19,30 @@ export class PlayerComponent {
   @Input() action3!: Action;
 
   constructor() {}
+
+  // Move action
+  movePlayer(direction: string): void {
+    switch (direction) {
+      case 'up':
+        if (this.colIndex > 0) {
+          this.colIndex--;
+        }
+        break;
+      case 'down':
+        if (this.colIndex < 4) {
+          this.colIndex++;
+        }
+        break;
+      case 'left':
+        if (this.rowIndex > 0) {
+          this.rowIndex--;
+        }
+        break;
+      case 'right':
+        if (this.rowIndex < 4) {
+          this.rowIndex++;
+        }
+        break;
+    }
+  }
 }

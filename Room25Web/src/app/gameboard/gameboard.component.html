@@ -1,23 +1,67 @@
-<div class="game-board">
-  <div *ngFor="let row of rows">
-    <div *ngFor="let col of cols" class="room">
-      <app-room
-        [rowIndex]="row"
-        [colIndex]="col"
-        [dangerousLevel]="roomDistribution[row * cols.length + col]"
-      >
-        <app-player
-          *ngIf="row === player.rowIndex && col === player.colIndex"
-        ></app-player>
-      </app-room>
+<main>
+  <div class="game-board">
+    <div *ngFor="let row of rows">
+      <div *ngFor="let col of cols" class="room">
+        <app-room
+          [rowIndex]="row"
+          [colIndex]="col"
+          [dangerousLevel]="roomDistribution[row * cols.length + col]"
+        >
+          <app-player
+            *ngIf="row === player.rowIndex && col === player.colIndex"
+          ></app-player>
+        </app-room>
+      </div>
     </div>
   </div>
+</main>
 
-  <!-- Buttons for player movement -->
+<!-- Buttons for player movement -->
+<section>
   <div class="player-controls">
-    <button (click)="movePlayer('up')">Up</button>
-    <button (click)="movePlayer('down')">Down</button>
-    <button (click)="movePlayer('left')">Left</button>
-    <button (click)="movePlayer('right')">Right</button>
+    <button (click)="player.movePlayer('up')">Up</button>
+    <button (click)="player.movePlayer('down')">Down</button>
+    <button (click)="player.movePlayer('left')">Left</button>
+    <button (click)="player.movePlayer('right')">Right</button>
   </div>
-</div>
+</section>
+
+<section>
+  <div class="player-actions">
+    <button
+      class="action"
+      [ngClass]="'action-move'"
+      (click)="player.movePlayer('up')"
+    >
+      Move
+    </button>
+    <button
+      class="action"
+      [ngClass]="'action-peek'"
+      (click)="player.movePlayer('down')"
+    >
+      Peek
+    </button>
+    <button
+      class="action"
+      [ngClass]="'action-push'"
+      (click)="player.movePlayer('left')"
+    >
+      Push
+    </button>
+    <button
+      class="action"
+      [ngClass]="'action-drag'"
+      (click)="player.movePlayer('right')"
+    >
+      Drag
+    </button>
+    <button
+      class="action"
+      [ngClass]="'action-special'"
+      (click)="player.movePlayer('right')"
+    >
+      Special
+    </button>
+  </div>
+</section>

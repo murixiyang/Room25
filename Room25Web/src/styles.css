@@ -1,1 +1,40 @@
 /* You can add global styles to this file, and also import other style files */
+.room-green {
+  background-color: lightgreen;
+}
+
+.room-yellow {
+  background-color: yellow;
+}
+
+.room-red {
+  background-color: red;
+}
+
+.room-blue {
+  background-color: lightblue;
+}
+
+.room-grey {
+  background-color: grey;
+}
+
+.action-move {
+  background-color: palevioletred;
+}
+
+.action-peek {
+  background-color: greenyellow;
+}
+
+.action-push {
+  background-color: coral;
+}
+
+.action-drag {
+  background-color: darkturquoise;
+}
+
+.action-special {
+  background-color: mediumorchid;
+}

@@ -1,8 +1,15 @@
 .game-board {
   display: flex;
-  max-width: 800px;
 }
 
 .room {
   margin: 10px;
+}
+
+.player-actions {
+  margin-top: 5%;
+}
+
+.action {
+  margin: 2%;
 }
