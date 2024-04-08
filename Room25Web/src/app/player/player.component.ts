@@ -21,28 +21,25 @@ export class PlayerComponent {
 
   constructor() {}
 
-  // Move action
-  movePlayer(direction: string): void {
-    switch (direction) {
-      case 'up':
-        if (this.colIndex > 0) {
-          this.colIndex--;
-        }
+  performAction(
+    action: Action,
+    selectedRowIndex: number,
+    selectedColIndex: number
+  ) {
+    switch (action) {
+      case Action.MOVE:
+        this.rowIndex = selectedRowIndex;
+        this.colIndex = selectedColIndex;
         break;
-      case 'down':
-        if (this.colIndex < 4) {
-          this.colIndex++;
-        }
+
+      case Action.PEEK:
+        console.log('This room is GREEN!');
         break;
-      case 'left':
-        if (this.rowIndex > 0) {
-          this.rowIndex--;
-        }
+      case Action.PUSH:
         break;
-      case 'right':
-        if (this.rowIndex < 4) {
-          this.rowIndex++;
-        }
+      case Action.DRAG:
+        break;
+      case Action.SPECIAL:
         break;
     }
   }

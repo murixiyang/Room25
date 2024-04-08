@@ -139,18 +139,33 @@ export class GameboardComponent {
   }
 
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
+    const selectedRowIndex = event.rowIndex;
+    const selectedColIndex = event.colIndex;
+
     const selectedRoom = this.roomComponents.find((room) => {
       return (
-        room.rowIndex === event.rowIndex && room.colIndex === event.colIndex
+        room.rowIndex === selectedRowIndex && room.colIndex === selectedColIndex
       );
     });
 
+    this.player.action1 = Action.MOVE;
+
     // Construct the message based on the action and room position
-    const message = `Player performed ${this.player.action1} in room (${event.colIndex} - ${event.rowIndex})`;
+    const message = `Player performed ${this.player.action1} in room (${selectedColIndex} - ${selectedRowIndex})`;
 
     // Display the message
     if (this.selectingRoom && this.isNeighbourRoom(selectedRoom)) {
       console.log(message);
+      // Perform player action
+      this.player.performAction(
+        this.player.action1,
+        selectedRowIndex,
+        selectedColIndex
+      );
+
+      // Perform room action
+
+      // Recover Room
       this.showDefulatRoomTransparency();
     }
   }
