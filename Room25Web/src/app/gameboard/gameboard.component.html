@@ -5,7 +5,8 @@
         <app-room
           [rowIndex]="row"
           [colIndex]="col"
-          [dangerousLevel]="roomDistribution[row * cols.length + col]"
+          [dangerousLevel]="roomDistribution[localFromIndexToID(row, col)]"
+          [revealed]="roomRevealed[localFromIndexToID(row, col)]"
           (roomClicked)="handleRoomClicked($event)"
         >
           <app-player

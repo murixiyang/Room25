@@ -26,7 +26,9 @@ export class RoomComponent {
   @Input() rowIndex: number = 0;
   @Input() colIndex: number = 0;
 
-  selectable: boolean = false;
+  // Room status
+  @Input() selectable: boolean = false;
+  @Input() revealed: boolean = false;
 
   @Output() roomClicked: EventEmitter<{
     rowIndex: number;

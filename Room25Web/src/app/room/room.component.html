@@ -3,6 +3,7 @@
   [ngClass]="'room-' + dangerousLevel.toLowerCase()"
   (click)="handleRoomClicked()"
   [class.selectable]="selectable"
+  [class.room-grey]="!revealed"
 >
   <span class="index">{{ colIndex }},{{ rowIndex }}</span>
   <ng-content></ng-content>

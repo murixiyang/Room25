@@ -6,7 +6,7 @@ import { PlayerComponent } from '../player/player.component';
 
 import { DangerousLevel } from '../dangerous-level.enum';
 import { Action } from '../action.enum';
-import { shuffle } from '../utils';
+import { fromIndexToID, shuffle } from '../utils';
 
 @Component({
   selector: 'app-gameboard',
@@ -38,8 +38,14 @@ export class GameboardComponent {
     ...Array(25).fill(DangerousLevel.GREEN),
   ];
 
+  roomRevealed: boolean[] = [...Array(25).fill(false)];
+
   constructor() {
+    // Randomly place rooms
     this.generateInitialBoard();
+
+    // Reveal center
+    this.roomRevealed[12] = true;
   }
 
   generateInitialBoard(): void {
@@ -141,14 +147,13 @@ export class GameboardComponent {
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
+    const selectedAction = Action.MOVE;
 
     const selectedRoom = this.roomComponents.find((room) => {
       return (
         room.rowIndex === selectedRowIndex && room.colIndex === selectedColIndex
       );
     });
-
-    this.player.action1 = Action.MOVE;
 
     // Construct the message based on the action and room position
     const message = `Player performed ${this.player.action1} in room (${selectedColIndex} - ${selectedRowIndex})`;
@@ -158,15 +163,27 @@ export class GameboardComponent {
       console.log(message);
       // Perform player action
       this.player.performAction(
-        this.player.action1,
+        selectedAction,
         selectedRowIndex,
         selectedColIndex
       );
 
+      // If move/push into an unrevealed room, reveal it
+      if (
+        !this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] &&
+        (selectedAction === Action.MOVE || selectedAction === Action.DRAG)
+      ) {
+        this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] =
+          true;
+      }
       // Perform room action
 
       // Recover Room
       this.showDefulatRoomTransparency();
     }
+  }
+
+  localFromIndexToID(rowIndex: number, colIndex: number): number {
+    return fromIndexToID(rowIndex, colIndex);
   }
 }

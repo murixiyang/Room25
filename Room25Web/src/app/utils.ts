@@ -4,3 +4,7 @@ export function shuffle<T>(array: T[]): void {
     [array[i], array[j]] = [array[j], array[i]];
   }
 }
+
+export function fromIndexToID(rowIndex: number, colIndex: number): number {
+  return rowIndex * 5 + colIndex;
+}
