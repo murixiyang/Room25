@@ -12,8 +12,10 @@ A web application simulating the board game Room25
 - `ng e2e` -- run end-to-end tests using the Protractor test framework. Simulate user interaction
 - `ng generate component [component name]` -- add new component
 
-
 # Game Rule Related
 
 ## Gameboard
+
 - index 0,0 indicates the top left conner
+- 1, 3: row 1; col 3
+- access: col first -- room[colIndex][rowIndex]

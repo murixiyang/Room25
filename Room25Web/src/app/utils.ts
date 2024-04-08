@@ -8,3 +8,7 @@ export function shuffle<T>(array: T[]): void {
 export function fromIndexToID(rowIndex: number, colIndex: number): number {
   return colIndex * 5 + rowIndex;
 }
+
+export function fromIDToIndex(id: number): [number, number] {
+  return [Math.floor(id / 5), id % 5];
+}

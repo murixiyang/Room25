@@ -22,11 +22,11 @@ export class PlayerComponent {
   constructor() {}
 
   performAction(
-    action: Action,
+    selectedAction: Action,
     selectedRowIndex: number,
     selectedColIndex: number
   ) {
-    switch (action) {
+    switch (selectedAction) {
       case Action.MOVE:
         this.rowIndex = selectedRowIndex;
         this.colIndex = selectedColIndex;
@@ -38,8 +38,11 @@ export class PlayerComponent {
       case Action.PUSH:
         break;
       case Action.DRAG:
+        
         break;
       case Action.SPECIAL:
+        break;
+      default:
         break;
     }
   }

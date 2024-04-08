@@ -1,4 +1,10 @@
-import { Component, QueryList, ViewChildren } from '@angular/core';
+import {
+  Component,
+  QueryList,
+  ViewChildren,
+  Renderer2,
+  ElementRef,
+} from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 
 import { RoomComponent } from '../room/room.component';
@@ -6,7 +12,7 @@ import { PlayerComponent } from '../player/player.component';
 
 import { DangerousLevel } from '../dangerous-level.enum';
 import { Action } from '../action.enum';
-import { fromIndexToID, shuffle } from '../utils';
+import { fromIDToIndex, fromIndexToID, shuffle } from '../utils';
 
 @Component({
   selector: 'app-gameboard',
@@ -34,13 +40,11 @@ export class GameboardComponent {
   greenNum = 4;
   blueNum = 2;
 
-  roomDistribution: DangerousLevel[] = [
-    ...Array(25).fill(DangerousLevel.GREEN),
-  ];
+  roomDistribution: RoomComponent[][] = [];
 
   roomRevealed: boolean[] = [...Array(25).fill(true)];
 
-  constructor() {
+  constructor(private renderer: Renderer2, private elRef: ElementRef) {
     // Randomly place rooms
     this.generateInitialBoard();
 
@@ -49,8 +53,25 @@ export class GameboardComponent {
   }
 
   generateInitialBoard(): void {
+    // Create RoomComponent instances and put them in roomDistribution
+    for (let col = 0; col < 5; col++) {
+      this.roomDistribution[col] = [];
+      for (let row = 0; row < 5; row++) {
+        const room = new RoomComponent(this.renderer, this.elRef);
+        room.rowIndex = row;
+        room.colIndex = col;
+
+        const id = fromIndexToID(row, col);
+        room.id = id;
+        room.revealed = this.roomRevealed[id];
+        this.roomDistribution[col][row] = room;
+
+        console.log('generated at ' + row + ', ' + col, ' id:' + id);
+      }
+    }
+
     // put center
-    this.roomDistribution[12] = DangerousLevel.BLUE;
+    this.roomDistribution[2][2].dangerousLevel = DangerousLevel.BLUE;
 
     // Shuffle and select indices for red, yellow, and green rooms
     const nearIndices = [2, 6, 7, 8, 10, 11, 13, 14, 16, 17, 18, 22];
@@ -65,7 +86,9 @@ export class GameboardComponent {
 
     // Assign red, yellow, and green rooms to selected indices
     for (let i = 0; i < nearIndices.length; i++) {
-      this.roomDistribution[nearIndices[i]] = firstSelection[i];
+      const [rowIndex, colIndex] = fromIDToIndex(nearIndices[i]);
+      this.roomDistribution[colIndex][rowIndex].dangerousLevel =
+        firstSelection[i];
     }
 
     // Calculate placed red, yellow, green
@@ -95,10 +118,13 @@ export class GameboardComponent {
 
     // Assign red, yellow, and green rooms to selected indices
     for (let i = 0; i < otherIndices.length; i++) {
-      this.roomDistribution[otherIndices[i]] = secondSelection[i];
+      const [rowIndex, colIndex] = fromIDToIndex(otherIndices[i]);
+      this.roomDistribution[colIndex][rowIndex].dangerousLevel =
+        secondSelection[i];
     }
   }
 
+  // For MOVE and PEEK
   showAvailableRoomsForAction() {
     // Make all rooms transparent
     this.roomComponents.forEach((room) => {
@@ -120,6 +146,9 @@ export class GameboardComponent {
       room.setTransparent(false);
     });
   }
+
+  // For DRAG
+  showAvailableDirection() {}
 
   private getNeighbourRooms(): RoomComponent[] {
     // Filter room components to find neighbor rooms
@@ -144,10 +173,11 @@ export class GameboardComponent {
     );
   }
 
+  // For MOVE, PEEK
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
-    const selectedAction = Action.MOVE;
+    const selectedAction = Action.DRAG;
 
     const selectedRoom = this.roomComponents.find((room) => {
       return (
@@ -156,7 +186,7 @@ export class GameboardComponent {
     });
 
     // Construct the message based on the action and room position
-    const message = `Player performed ${this.player.action1} in room (${selectedColIndex} - ${selectedRowIndex})`;
+    const message = `Player performed ${selectedAction} in room (${selectedColIndex} - ${selectedRowIndex})`;
 
     // Display the message
     if (this.selectingRoom && this.isNeighbourRoom(selectedRoom)) {
@@ -169,18 +199,59 @@ export class GameboardComponent {
       );
 
       // If move/push into an unrevealed room, reveal it
-      if (
-        !this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] &&
-        (selectedAction === Action.MOVE || selectedAction === Action.DRAG)
-      ) {
-        this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] =
-          true;
-      }
+      // if (
+      //   !this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] &&
+      //   (selectedAction === Action.MOVE || selectedAction === Action.PUSH)
+      // ) {
+      //   this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] =
+      //     true;
+      // }
+
       // Perform room action
+      this.handleDrag('left');
 
       // Recover Room
       this.showDefulatRoomTransparency();
     }
+  }
+
+  handleDrag(direction: 'left' | 'right' | 'up' | 'down') {
+    const selectedDirection = direction;
+    switch (selectedDirection) {
+      case 'left':
+      case 'right':
+        this.dragRow(this.player.rowIndex, selectedDirection);
+        break;
+      case 'up':
+      case 'down':
+    }
+  }
+
+  dragRow(rowIndex: number, direction: 'left' | 'right'): void {
+    const rowSize = 5;
+
+    // Calculate the new indices for the rooms in the row
+    const newRoomIndices = Array(rowSize)
+      .fill(0)
+      .map((_, i) => {
+        let newIndex = i;
+        if (direction === 'left') {
+          newIndex = i === 0 ? rowSize - 1 : i - 1; // Wrap around if at the beginning
+        } else {
+          newIndex = i === rowSize - 1 ? 0 : i + 1; // Wrap around if at the end
+        }
+        return fromIndexToID(rowIndex, newIndex);
+      });
+
+    // Update the room distribution based on the new indices
+    const newRoomDistribution = this.roomDistribution.slice(); // Copy the array to avoid mutation
+    for (let i = 0; i < rowSize; i++) {
+      newRoomDistribution[newRoomIndices[i]] =
+        this.roomDistribution[fromIndexToID(rowIndex, i)];
+    }
+
+    // Update the room distribution
+    this.roomDistribution = newRoomDistribution;
   }
 
   localFromIndexToID(rowIndex: number, colIndex: number): number {

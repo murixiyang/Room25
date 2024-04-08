@@ -1,19 +1,24 @@
 <main>
   <div class="game-board">
-    <div *ngFor="let row of rows">
-      <div *ngFor="let col of cols" class="room">
-        <app-room
-          [rowIndex]="row"
-          [colIndex]="col"
-          [id]="localFromIndexToID(row, col)"
-          [dangerousLevel]="roomDistribution[localFromIndexToID(row, col)]"
-          [revealed]="roomRevealed[localFromIndexToID(row, col)]"
-          (roomClicked)="handleRoomClicked($event)"
-        >
-          <app-player
-            *ngIf="row === player.rowIndex && col === player.colIndex"
-          ></app-player>
-        </app-room>
+    <div *ngFor="let col of roomDistribution">
+      <div class="board-col">
+        <div *ngFor="let room of col" class="room">
+          <app-room
+            [rowIndex]="room.rowIndex"
+            [colIndex]="room.colIndex"
+            [id]="room.id"
+            [dangerousLevel]="room.dangerousLevel"
+            [revealed]="room.revealed"
+            (roomClicked)="handleRoomClicked($event)"
+          >
+            <app-player
+              *ngIf="
+                room.rowIndex === player.rowIndex &&
+                room.colIndex === player.colIndex
+              "
+            ></app-player>
+          </app-room>
+        </div>
       </div>
     </div>
   </div>
