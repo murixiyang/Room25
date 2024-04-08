@@ -7,8 +7,13 @@
   border: 3px solid black; /* Border for visualization */
   font-size: 14px; /* Adjust as needed */
   font-weight: bold;
+  opacity: 1;
 }
 
 .index {
   color: black; /* Text color */
+}
+
+.transparent {
+  opacity: 0.5; /* Set the opacity to make the rooms transparent */
 }

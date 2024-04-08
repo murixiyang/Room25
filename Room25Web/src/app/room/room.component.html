@@ -1,4 +1,8 @@
-<div class="room" [ngClass]="'room-' + dangerousLevel.toLowerCase()">
+<div
+  class="room"
+  [ngClass]="'room-' + dangerousLevel.toLowerCase()"
+  (click)="handleRoomClicked()"
+>
   <span class="index">{{ colIndex }},{{ rowIndex }}</span>
   <ng-content></ng-content>
 </div>

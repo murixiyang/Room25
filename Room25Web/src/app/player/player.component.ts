@@ -1,10 +1,11 @@
 import { Component, Input } from '@angular/core';
 import { Action } from '../action.enum';
+import { RoomComponent } from '../room/room.component';
 
 @Component({
   selector: 'app-player',
   standalone: true,
-  imports: [],
+  imports: [RoomComponent],
   templateUrl: './player.component.html',
   styleUrl: './player.component.css',
 })

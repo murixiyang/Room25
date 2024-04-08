@@ -6,6 +6,7 @@
           [rowIndex]="row"
           [colIndex]="col"
           [dangerousLevel]="roomDistribution[row * cols.length + col]"
+          (roomClicked)="handleRoomClicked($event)"
         >
           <app-player
             *ngIf="row === player.rowIndex && col === player.colIndex"
@@ -31,35 +32,35 @@
     <button
       class="action"
       [ngClass]="'action-move'"
-      (click)="player.movePlayer('up')"
+      (click)="showAvailableRoomsForAction()"
     >
       Move
     </button>
     <button
       class="action"
       [ngClass]="'action-peek'"
-      (click)="player.movePlayer('down')"
+      (click)="showAvailableRoomsForAction()"
     >
       Peek
     </button>
     <button
       class="action"
       [ngClass]="'action-push'"
-      (click)="player.movePlayer('left')"
+      (click)="showAvailableRoomsForAction()"
     >
       Push
     </button>
     <button
       class="action"
       [ngClass]="'action-drag'"
-      (click)="player.movePlayer('right')"
+      (click)="showAvailableRoomsForAction()"
     >
       Drag
     </button>
     <button
       class="action"
       [ngClass]="'action-special'"
-      (click)="player.movePlayer('right')"
+      (click)="showAvailableRoomsForAction()"
     >
       Special
     </button>

@@ -1,9 +1,11 @@
-import { Component } from '@angular/core';
-import { RoomComponent } from '../room/room.component';
+import { Component, QueryList, ViewChildren } from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 
+import { RoomComponent } from '../room/room.component';
 import { PlayerComponent } from '../player/player.component';
+
 import { DangerousLevel } from '../dangerous-level.enum';
+import { Action } from '../action.enum';
 import { shuffle } from '../utils';
 
 @Component({
@@ -14,9 +16,13 @@ import { shuffle } from '../utils';
   styleUrl: './gameboard.component.css',
 })
 export class GameboardComponent {
+  @ViewChildren(RoomComponent) roomComponents!: QueryList<RoomComponent>;
+
   rows: number[] = [0, 1, 2, 3, 4];
   cols: number[] = [0, 1, 2, 3, 4];
   player = new PlayerComponent();
+
+  Action = Action;
 
   redNum = 8;
   yellowNum = 10;
@@ -82,5 +88,39 @@ export class GameboardComponent {
     }
   }
 
-  
+  showAvailableRoomsForAction() {
+    // Make all rooms transparent
+    this.roomComponents.forEach((room) => {
+      room.setTransparent(true);
+    });
+
+    // Make neighbour room
+    this.getNeighborRooms().forEach((room) => {
+      room.setTransparent(false);
+    });
+  }
+
+  private getNeighborRooms(): RoomComponent[] {
+    // Filter room components to find neighbor rooms
+    return this.roomComponents.filter((room) => {
+      return (
+        (room.rowIndex === this.player.rowIndex - 1 &&
+          room.colIndex === this.player.colIndex) || // Room above
+        (room.rowIndex === this.player.rowIndex + 1 &&
+          room.colIndex === this.player.colIndex) || // Room below
+        (room.rowIndex === this.player.rowIndex &&
+          room.colIndex === this.player.colIndex - 1) || // Room to the left
+        (room.rowIndex === this.player.rowIndex &&
+          room.colIndex === this.player.colIndex + 1) // Room to the right
+      );
+    });
+  }
+
+  handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
+    // Construct the message based on the action and room position
+    const message = `You performed ${this.player.action1} in room (${event.rowIndex} - ${event.colIndex})`;
+
+    // Display the message
+    console.log(message);
+  }
 }
