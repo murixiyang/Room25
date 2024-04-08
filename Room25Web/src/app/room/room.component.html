@@ -2,6 +2,7 @@
   class="room"
   [ngClass]="'room-' + dangerousLevel.toLowerCase()"
   (click)="handleRoomClicked()"
+  [class.selectable]="selectable"
 >
   <span class="index">{{ colIndex }},{{ rowIndex }}</span>
   <ng-content></ng-content>

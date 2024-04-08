@@ -22,8 +22,13 @@ export class GameboardComponent {
   cols: number[] = [0, 1, 2, 3, 4];
   player = new PlayerComponent();
 
+  // Game status
+  selectingRoom = false;
+
+  // Enum
   Action = Action;
 
+  // Game setup
   redNum = 8;
   yellowNum = 10;
   greenNum = 4;
@@ -95,12 +100,22 @@ export class GameboardComponent {
     });
 
     // Make neighbour room
-    this.getNeighborRooms().forEach((room) => {
+    this.getNeighbourRooms().forEach((room) => {
+      room.setTransparent(false);
+      room.selectable = true;
+    });
+
+    this.selectingRoom = true;
+  }
+
+  showDefulatRoomTransparency() {
+    // Make all rooms transparent
+    this.roomComponents.forEach((room) => {
       room.setTransparent(false);
     });
   }
 
-  private getNeighborRooms(): RoomComponent[] {
+  private getNeighbourRooms(): RoomComponent[] {
     // Filter room components to find neighbor rooms
     return this.roomComponents.filter((room) => {
       return (
@@ -116,11 +131,27 @@ export class GameboardComponent {
     });
   }
 
+  private isNeighbourRoom(selectedRoom: RoomComponent | undefined): boolean {
+    return (
+      selectedRoom !== undefined &&
+      this.getNeighbourRooms().includes(selectedRoom)
+    );
+  }
+
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
+    const selectedRoom = this.roomComponents.find((room) => {
+      return (
+        room.rowIndex === event.rowIndex && room.colIndex === event.colIndex
+      );
+    });
+
     // Construct the message based on the action and room position
-    const message = `You performed ${this.player.action1} in room (${event.rowIndex} - ${event.colIndex})`;
+    const message = `Player performed ${this.player.action1} in room (${event.colIndex} - ${event.rowIndex})`;
 
     // Display the message
-    console.log(message);
+    if (this.selectingRoom && this.isNeighbourRoom(selectedRoom)) {
+      console.log(message);
+      this.showDefulatRoomTransparency();
+    }
   }
 }

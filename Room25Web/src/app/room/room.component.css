@@ -17,3 +17,14 @@
 .transparent {
   opacity: 0.5; /* Set the opacity to make the rooms transparent */
 }
+
+.selectable {
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+
+.selectable:hover {
+  opacity: 0.7;
+  transform: scale(1.05);
+}
