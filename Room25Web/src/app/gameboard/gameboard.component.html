@@ -1,11 +1,11 @@
 <main>
   <div class="game-board">
-    <div *ngFor="let col of roomDistribution">
-      <div class="board-col">
-        <div *ngFor="let room of col" class="room">
+    <div *ngFor="let row of roomDistribution">
+      <div class="board-row">
+        <div *ngFor="let room of row" class="room">
           <app-room
-            [rowIndex]="room.rowIndex"
-            [colIndex]="room.colIndex"
+            [rowIndex]="room.getRowIndex()"
+            [colIndex]="room.getColIndex()"
             [id]="room.id"
             [dangerousLevel]="room.dangerousLevel"
             [revealed]="room.revealed"
@@ -13,8 +13,8 @@
           >
             <app-player
               *ngIf="
-                room.rowIndex === player.rowIndex &&
-                room.colIndex === player.colIndex
+                room.getRowIndex() === player.getRowIndex() &&
+                room.getColIndex() === player.getColIndex()
               "
             ></app-player>
           </app-room>

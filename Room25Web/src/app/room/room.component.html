@@ -5,6 +5,6 @@
   [class.selectable]="selectable"
   [class.room-grey]="!revealed"
 >
-  <span class="index">{{ id }}: {{ rowIndex }},{{ colIndex }}</span>
+  <span class="index">{{ id }}: {{ getRowIndex() }},{{ getColIndex() }}</span>
   <ng-content></ng-content>
 </div>

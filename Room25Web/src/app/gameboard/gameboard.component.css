@@ -1,4 +1,8 @@
 .game-board {
+  display: grid;
+}
+
+.board-row {
   display: flex;
 }
 

@@ -62,4 +62,21 @@ export class RoomComponent {
       colIndex: this.colIndex,
     });
   }
+
+  updatePosition(rowIndex: number, colIndex: number) {
+    this.rowIndex = rowIndex;
+    this.colIndex = colIndex;
+  }
+
+  getRowIndex(): number {
+    return this.rowIndex;
+  }
+
+  getColIndex(): number {
+    return this.colIndex;
+  }
+
+  getPosition(): [number, number] {
+    return [this.rowIndex, this.colIndex];
+  }
 }

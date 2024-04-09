@@ -11,8 +11,8 @@ import { RoomComponent } from '../room/room.component';
 })
 export class PlayerComponent {
   @Input() name: string = 'Frank';
-  @Input() rowIndex: number = 2;
-  @Input() colIndex: number = 2;
+  private rowIndex: number = 2;
+  private colIndex: number = 2;
   @Input() survived: boolean = true;
 
   @Input() action1!: Action;
@@ -38,12 +38,28 @@ export class PlayerComponent {
       case Action.PUSH:
         break;
       case Action.DRAG:
-        
         break;
       case Action.SPECIAL:
         break;
       default:
         break;
     }
+  }
+
+  updatePosition(rowIndex: number, colIndex: number) {
+    this.rowIndex = rowIndex;
+    this.colIndex = colIndex;
+  }
+
+  getRowIndex(): number {
+    return this.rowIndex;
+  }
+
+  getColIndex(): number {
+    return this.colIndex;
+  }
+
+  getPosition(): [number, number] {
+    return [this.rowIndex, this.colIndex];
   }
 }

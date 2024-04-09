@@ -6,9 +6,25 @@ export function shuffle<T>(array: T[]): void {
 }
 
 export function fromIndexToID(rowIndex: number, colIndex: number): number {
-  return colIndex * 5 + rowIndex;
+  return rowIndex * 5 + colIndex;
 }
 
 export function fromIDToIndex(id: number): [number, number] {
   return [Math.floor(id / 5), id % 5];
+}
+
+export function samePosition(
+  position1: [number, number],
+  position2: [number, number]
+): boolean {
+  return position1[0] === position2[0] && position1[1] === position2[1];
+}
+
+export function rotateToNegative(input: number) {
+  const newIndex = (input - 1) % 5;
+  return newIndex < 0 ? newIndex + 5 : newIndex;
+}
+
+export function rotateToPositive(input: number) {
+  return (input + 1) % 5;
 }

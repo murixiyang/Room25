@@ -12,7 +12,14 @@ import { PlayerComponent } from '../player/player.component';
 
 import { DangerousLevel } from '../dangerous-level.enum';
 import { Action } from '../action.enum';
-import { fromIDToIndex, fromIndexToID, shuffle } from '../utils';
+import { rotateToNegative } from '../utils';
+import {
+  fromIDToIndex,
+  fromIndexToID,
+  samePosition,
+  shuffle,
+  rotateToPositive,
+} from '../utils';
 
 @Component({
   selector: 'app-gameboard',
@@ -54,19 +61,16 @@ export class GameboardComponent {
 
   generateInitialBoard(): void {
     // Create RoomComponent instances and put them in roomDistribution
-    for (let col = 0; col < 5; col++) {
-      this.roomDistribution[col] = [];
-      for (let row = 0; row < 5; row++) {
+    for (let row = 0; row < 5; row++) {
+      this.roomDistribution[row] = [];
+      for (let col = 0; col < 5; col++) {
         const room = new RoomComponent(this.renderer, this.elRef);
-        room.rowIndex = row;
-        room.colIndex = col;
+        room.updatePosition(row, col);
 
         const id = fromIndexToID(row, col);
         room.id = id;
         room.revealed = this.roomRevealed[id];
-        this.roomDistribution[col][row] = room;
-
-        console.log('generated at ' + row + ', ' + col, ' id:' + id);
+        this.roomDistribution[row][col] = room;
       }
     }
 
@@ -87,7 +91,7 @@ export class GameboardComponent {
     // Assign red, yellow, and green rooms to selected indices
     for (let i = 0; i < nearIndices.length; i++) {
       const [rowIndex, colIndex] = fromIDToIndex(nearIndices[i]);
-      this.roomDistribution[colIndex][rowIndex].dangerousLevel =
+      this.roomDistribution[rowIndex][colIndex].dangerousLevel =
         firstSelection[i];
     }
 
@@ -119,7 +123,7 @@ export class GameboardComponent {
     // Assign red, yellow, and green rooms to selected indices
     for (let i = 0; i < otherIndices.length; i++) {
       const [rowIndex, colIndex] = fromIDToIndex(otherIndices[i]);
-      this.roomDistribution[colIndex][rowIndex].dangerousLevel =
+      this.roomDistribution[rowIndex][colIndex].dangerousLevel =
         secondSelection[i];
     }
   }
@@ -144,6 +148,7 @@ export class GameboardComponent {
     // Make all rooms transparent
     this.roomComponents.forEach((room) => {
       room.setTransparent(false);
+      room.selectable = false;
     });
   }
 
@@ -153,15 +158,16 @@ export class GameboardComponent {
   private getNeighbourRooms(): RoomComponent[] {
     // Filter room components to find neighbor rooms
     return this.roomComponents.filter((room) => {
+      const [roomRowIndex, roomColIndex] = room.getPosition();
+      const [playerRowIndex, playerColIndex] = this.player.getPosition();
       return (
-        (room.rowIndex === this.player.rowIndex - 1 &&
-          room.colIndex === this.player.colIndex) || // Room above
-        (room.rowIndex === this.player.rowIndex + 1 &&
-          room.colIndex === this.player.colIndex) || // Room below
-        (room.rowIndex === this.player.rowIndex &&
-          room.colIndex === this.player.colIndex - 1) || // Room to the left
-        (room.rowIndex === this.player.rowIndex &&
-          room.colIndex === this.player.colIndex + 1) // Room to the right
+        (roomRowIndex === playerRowIndex - 1 &&
+          roomColIndex === playerColIndex) || // Room above
+        (roomRowIndex === playerRowIndex + 1 &&
+          roomColIndex === playerColIndex) || // Room below
+        (roomRowIndex === playerRowIndex &&
+          roomColIndex === playerColIndex - 1) || // Room to the left
+        (roomRowIndex === playerRowIndex && roomColIndex === playerColIndex + 1) // Room to the right
       );
     });
   }
@@ -181,9 +187,15 @@ export class GameboardComponent {
 
     const selectedRoom = this.roomComponents.find((room) => {
       return (
-        room.rowIndex === selectedRowIndex && room.colIndex === selectedColIndex
+        room.getPosition()[0] === selectedRowIndex &&
+        room.getPosition()[1] === selectedColIndex
       );
     });
+
+    // If not selectable, dont do anything
+    if (!selectedRoom?.selectable) {
+      return;
+    }
 
     // Construct the message based on the action and room position
     const message = `Player performed ${selectedAction} in room (${selectedColIndex} - ${selectedRowIndex})`;
@@ -220,34 +232,54 @@ export class GameboardComponent {
     switch (selectedDirection) {
       case 'left':
       case 'right':
-        this.dragRow(this.player.rowIndex, selectedDirection);
+        this.dragRow(this.player.getPosition()[0], selectedDirection);
         break;
       case 'up':
       case 'down':
     }
   }
 
-  dragRow(rowIndex: number, direction: 'left' | 'right'): void {
-    const rowSize = 5;
+  dragRow(selectedRowIndex: number, direction: 'left' | 'right'): void {
+    const newRoomDistribution: RoomComponent[][] = [];
+    // Make deep copy
+    for (let row = 0; row < 5; row++) {
+      newRoomDistribution[row] = [];
+      for (let col = 0; col < 5; col++) {
+        newRoomDistribution[row][col] = this.roomDistribution[row][col];
+      }
+    }
 
-    // Calculate the new indices for the rooms in the row
-    const newRoomIndices = Array(rowSize)
-      .fill(0)
-      .map((_, i) => {
-        let newIndex = i;
-        if (direction === 'left') {
-          newIndex = i === 0 ? rowSize - 1 : i - 1; // Wrap around if at the beginning
-        } else {
-          newIndex = i === rowSize - 1 ? 0 : i + 1; // Wrap around if at the end
-        }
-        return fromIndexToID(rowIndex, newIndex);
-      });
+    var movePlayer = false;
 
-    // Update the room distribution based on the new indices
-    const newRoomDistribution = this.roomDistribution.slice(); // Copy the array to avoid mutation
-    for (let i = 0; i < rowSize; i++) {
-      newRoomDistribution[newRoomIndices[i]] =
-        this.roomDistribution[fromIndexToID(rowIndex, i)];
+    // Change the row
+    for (let col = 0; col < 5; col++) {
+      // Change room
+      const updatedCol =
+        direction === 'left' ? rotateToPositive(col) : rotateToNegative(col);
+      newRoomDistribution[selectedRowIndex][col] =
+        this.roomDistribution[selectedRowIndex][updatedCol];
+
+      // Persist index
+      newRoomDistribution[selectedRowIndex][col].updatePosition(
+        selectedRowIndex,
+        col
+      );
+
+      // Check if need to move player
+      if (samePosition([selectedRowIndex, col], this.player.getPosition())) {
+        movePlayer = true;
+      }
+    }
+
+    // Move player
+    if (movePlayer) {
+      const [playerRowIndex, playerColIndex] = this.player.getPosition();
+      const updatedCol =
+        direction === 'left'
+          ? rotateToNegative(playerColIndex)
+          : rotateToPositive(playerColIndex);
+
+      this.player.updatePosition(playerRowIndex, updatedCol);
     }
 
     // Update the room distribution
