@@ -192,17 +192,16 @@ export class GameboardComponent {
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
+
     const selectedAction = Action.DRAG;
 
-    console.log(
-      `Clicked ${selectedAction} in room (${selectedColIndex} - ${selectedRowIndex})`
-    );
+    console.log(`Clicked room (${selectedRowIndex}, ${selectedColIndex})`);
 
     const selectedRoom = this.roomComponents.find((room) => {
-      return (
-        room.getPosition()[0] === selectedRowIndex &&
-        room.getPosition()[1] === selectedColIndex
-      );
+      return samePosition(room.getPosition(), [
+        selectedRowIndex,
+        selectedColIndex,
+      ]);
     });
 
     // If not selectable, dont do anything
@@ -211,11 +210,12 @@ export class GameboardComponent {
     }
 
     // Construct the message based on the action and room position
-    const message = `Player performed ${selectedAction} in room (${selectedColIndex} - ${selectedRowIndex})`;
+    const message = `Player performed ${selectedAction} in room (${selectedRowIndex} - ${selectedColIndex})`;
 
     // Display the message
     if (this.selectingRoom && this.isNeighbourToPlayer(selectedRoom)) {
       console.log(message);
+
       // Perform player action
       this.player.performAction(
         selectedAction,

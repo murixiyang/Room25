@@ -13,6 +13,7 @@ export class PlayerComponent {
   @Input() name: string = 'Frank';
   private rowIndex: number = 2;
   private colIndex: number = 2;
+
   @Input() survived: boolean = true;
 
   @Input() action1!: Action;
@@ -21,6 +22,7 @@ export class PlayerComponent {
 
   constructor() {}
 
+  // Perform user side action
   performAction(
     selectedAction: Action,
     selectedRowIndex: number,
@@ -28,8 +30,7 @@ export class PlayerComponent {
   ) {
     switch (selectedAction) {
       case Action.MOVE:
-        this.rowIndex = selectedRowIndex;
-        this.colIndex = selectedColIndex;
+        this.updatePosition(selectedRowIndex, selectedColIndex);
         break;
 
       case Action.PEEK:
@@ -46,9 +47,18 @@ export class PlayerComponent {
     }
   }
 
-  updatePosition(rowIndex: number, colIndex: number) {
-    this.rowIndex = rowIndex;
-    this.colIndex = colIndex;
+  // Overload updatePosition
+  updatePosition(rowIndex: number, colIndex: number): void;
+  updatePosition(position: [number, number]): void;
+
+  updatePosition(arg1: any, arg2?: any): void {
+    if (arg2) {
+      this.rowIndex = arg1;
+      this.colIndex = arg2;
+    } else {
+      this.rowIndex = arg1[0];
+      this.colIndex = arg1[1];
+    }
   }
 
   getRowIndex(): number {

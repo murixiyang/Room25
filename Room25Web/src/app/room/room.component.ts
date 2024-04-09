@@ -47,27 +47,36 @@ export class RoomComponent {
     );
   }
 
+  // Update the opacity based on the transparent state
   setTransparent(isTransparent: boolean): void {
-    // Update the opacity based on the transparent state
-
     const roomElement = this.elRef.nativeElement;
     const opacity = isTransparent ? '0.2' : '1';
     this.renderer.setStyle(roomElement, 'opacity', opacity);
   }
 
+  // Emit the click event with the room position
   handleRoomClicked(): void {
-    // Emit the click event with the action and room position
     this.roomClicked.emit({
       rowIndex: this.rowIndex,
       colIndex: this.colIndex,
     });
   }
 
-  updatePosition(rowIndex: number, colIndex: number) {
-    this.rowIndex = rowIndex;
-    this.colIndex = colIndex;
+  // Overload updatePosition
+  updatePosition(rowIndex: number, colIndex: number): void;
+  updatePosition(position: [number, number]): void;
+
+  updatePosition(arg1: any, arg2?: any): void {
+    if (arg2) {
+      this.rowIndex = arg1;
+      this.colIndex = arg2;
+    } else {
+      this.rowIndex = arg1[0];
+      this.colIndex = arg1[1];
+    }
   }
 
+  // Get room position
   getRowIndex(): number {
     return this.rowIndex;
   }
