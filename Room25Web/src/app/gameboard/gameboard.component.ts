@@ -136,7 +136,7 @@ export class GameboardComponent {
     });
 
     // Make neighbour room
-    this.getNeighbourRooms().forEach((room) => {
+    this.getNeighbourRooms(this.player.getPosition()).forEach((room) => {
       room.setTransparent(false);
       room.selectable = true;
     });
@@ -152,30 +152,39 @@ export class GameboardComponent {
     });
   }
 
+  // For PUSH
+  showAvailablePlayer() {}
+
   // For DRAG
   showAvailableDirection() {}
 
-  private getNeighbourRooms(): RoomComponent[] {
+  private getNeighbourRooms(
+    selectedPosition: [number, number]
+  ): RoomComponent[] {
+    const [selectedRowIndex, selectedColIndex] = selectedPosition;
+    console.log(selectedPosition);
     // Filter room components to find neighbor rooms
     return this.roomComponents.filter((room) => {
       const [roomRowIndex, roomColIndex] = room.getPosition();
-      const [playerRowIndex, playerColIndex] = this.player.getPosition();
       return (
-        (roomRowIndex === playerRowIndex - 1 &&
-          roomColIndex === playerColIndex) || // Room above
-        (roomRowIndex === playerRowIndex + 1 &&
-          roomColIndex === playerColIndex) || // Room below
-        (roomRowIndex === playerRowIndex &&
-          roomColIndex === playerColIndex - 1) || // Room to the left
-        (roomRowIndex === playerRowIndex && roomColIndex === playerColIndex + 1) // Room to the right
+        (roomRowIndex === selectedRowIndex - 1 &&
+          roomColIndex === selectedColIndex) || // Room above
+        (roomRowIndex === selectedRowIndex + 1 &&
+          roomColIndex === selectedColIndex) || // Room below
+        (roomRowIndex === selectedRowIndex &&
+          roomColIndex === selectedColIndex - 1) || // Room to the left
+        (roomRowIndex === selectedRowIndex &&
+          roomColIndex === selectedColIndex + 1) // Room to the right
       );
     });
   }
 
-  private isNeighbourRoom(selectedRoom: RoomComponent | undefined): boolean {
+  private isNeighbourToPlayer(
+    selectedRoom: RoomComponent | undefined
+  ): boolean {
     return (
       selectedRoom !== undefined &&
-      this.getNeighbourRooms().includes(selectedRoom)
+      this.getNeighbourRooms(this.player.getPosition()).includes(selectedRoom)
     );
   }
 
@@ -184,6 +193,10 @@ export class GameboardComponent {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
     const selectedAction = Action.DRAG;
+
+    console.log(
+      `Clicked ${selectedAction} in room (${selectedColIndex} - ${selectedRowIndex})`
+    );
 
     const selectedRoom = this.roomComponents.find((room) => {
       return (
@@ -201,7 +214,7 @@ export class GameboardComponent {
     const message = `Player performed ${selectedAction} in room (${selectedColIndex} - ${selectedRowIndex})`;
 
     // Display the message
-    if (this.selectingRoom && this.isNeighbourRoom(selectedRoom)) {
+    if (this.selectingRoom && this.isNeighbourToPlayer(selectedRoom)) {
       console.log(message);
       // Perform player action
       this.player.performAction(
