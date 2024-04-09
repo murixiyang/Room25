@@ -18,4 +18,4 @@ A web application simulating the board game Room25
 
 - index 0,0 indicates the top left conner
 - 1, 3: row 1; col 3
-- access: col first -- room[colIndex][rowIndex]
+- access: row first -- room[rowIndex][colIndex]
