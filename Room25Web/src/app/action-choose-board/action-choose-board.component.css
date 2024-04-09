@@ -1,0 +1,9 @@
+.player-actions {
+  display: flex;
+  /* justify-content: center; */
+  margin-top: 5%;
+}
+
+.action {
+  margin: 2%;
+}

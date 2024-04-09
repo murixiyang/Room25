@@ -52,7 +52,7 @@ export class PlayerComponent {
   updatePosition(position: [number, number]): void;
 
   updatePosition(arg1: any, arg2?: any): void {
-    if (arg2) {
+    if (arg2 !== undefined) {
       this.rowIndex = arg1;
       this.colIndex = arg2;
     } else {
@@ -61,6 +61,7 @@ export class PlayerComponent {
     }
   }
 
+  // Get player action
   getRowIndex(): number {
     return this.rowIndex;
   }

@@ -66,8 +66,8 @@ export class RoomComponent {
   updatePosition(rowIndex: number, colIndex: number): void;
   updatePosition(position: [number, number]): void;
 
-  updatePosition(arg1: any, arg2?: any): void {
-    if (arg2) {
+  updatePosition(arg1: any, arg2?: number): void {
+    if (arg2 !== undefined) {
       this.rowIndex = arg1;
       this.colIndex = arg2;
     } else {
