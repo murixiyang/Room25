@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { NgClass } from '@angular/common';
 import { GameboardComponent } from '../gameboard/gameboard.component';
+import { Action } from '../action.enum';
 
 @Component({
   selector: 'app-action-choose-board',
@@ -10,5 +11,12 @@ import { GameboardComponent } from '../gameboard/gameboard.component';
   styleUrl: './action-choose-board.component.css',
 })
 export class ActionChooseBoardComponent {
-  gameboard!: GameboardComponent;
+  Action = Action;
+
+  @Output() triggerActionChoose: EventEmitter<Action> =
+    new EventEmitter<Action>();
+
+  onClickButton(selectedAction: Action) {
+    this.triggerActionChoose.emit(selectedAction);
+  }
 }

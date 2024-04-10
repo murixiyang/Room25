@@ -128,8 +128,26 @@ export class GameboardComponent {
     }
   }
 
+  handleShowActionTarget(action: Action) {
+    switch (action) {
+      case Action.MOVE:
+      case Action.PEEK:
+        this.showAvailableRoomsForAction();
+        break;
+      case Action.PUSH:
+        this.showAvailablePlayerForAction();
+        // Then choose room
+        break;
+      case Action.DRAG:
+        this.showAvailableDirectionForAction();
+        break;
+      default:
+        break;
+    }
+  }
+
   // For MOVE and PEEK
-  showAvailableRoomsForAction() {
+  private showAvailableRoomsForAction() {
     // Make all rooms transparent
     this.roomComponents.forEach((room) => {
       room.setTransparent(true);
@@ -153,40 +171,10 @@ export class GameboardComponent {
   }
 
   // For PUSH
-  showAvailablePlayer() {}
+  private showAvailablePlayerForAction() {}
 
   // For DRAG
-  showAvailableDirection() {}
-
-  private getNeighbourRooms(
-    selectedPosition: [number, number]
-  ): RoomComponent[] {
-    const [selectedRowIndex, selectedColIndex] = selectedPosition;
-    console.log(selectedPosition);
-    // Filter room components to find neighbor rooms
-    return this.roomComponents.filter((room) => {
-      const [roomRowIndex, roomColIndex] = room.getPosition();
-      return (
-        (roomRowIndex === selectedRowIndex - 1 &&
-          roomColIndex === selectedColIndex) || // Room above
-        (roomRowIndex === selectedRowIndex + 1 &&
-          roomColIndex === selectedColIndex) || // Room below
-        (roomRowIndex === selectedRowIndex &&
-          roomColIndex === selectedColIndex - 1) || // Room to the left
-        (roomRowIndex === selectedRowIndex &&
-          roomColIndex === selectedColIndex + 1) // Room to the right
-      );
-    });
-  }
-
-  private isNeighbourToPlayer(
-    selectedRoom: RoomComponent | undefined
-  ): boolean {
-    return (
-      selectedRoom !== undefined &&
-      this.getNeighbourRooms(this.player.getPosition()).includes(selectedRoom)
-    );
-  }
+  private showAvailableDirectionForAction() {}
 
   // For MOVE, PEEK
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
@@ -252,7 +240,7 @@ export class GameboardComponent {
     }
   }
 
-  dragRow(selectedRowIndex: number, direction: 'left' | 'right'): void {
+  private dragRow(selectedRowIndex: number, direction: 'left' | 'right'): void {
     const newRoomDistribution: RoomComponent[][] = [];
     // Make deep copy
     for (let row = 0; row < 5; row++) {
@@ -297,6 +285,36 @@ export class GameboardComponent {
 
     // Update the room distribution
     this.roomDistribution = newRoomDistribution;
+  }
+
+  private getNeighbourRooms(
+    selectedPosition: [number, number]
+  ): RoomComponent[] {
+    const [selectedRowIndex, selectedColIndex] = selectedPosition;
+    console.log(selectedPosition);
+    // Filter room components to find neighbor rooms
+    return this.roomComponents.filter((room) => {
+      const [roomRowIndex, roomColIndex] = room.getPosition();
+      return (
+        (roomRowIndex === selectedRowIndex - 1 &&
+          roomColIndex === selectedColIndex) || // Room above
+        (roomRowIndex === selectedRowIndex + 1 &&
+          roomColIndex === selectedColIndex) || // Room below
+        (roomRowIndex === selectedRowIndex &&
+          roomColIndex === selectedColIndex - 1) || // Room to the left
+        (roomRowIndex === selectedRowIndex &&
+          roomColIndex === selectedColIndex + 1) // Room to the right
+      );
+    });
+  }
+
+  private isNeighbourToPlayer(
+    selectedRoom: RoomComponent | undefined
+  ): boolean {
+    return (
+      selectedRoom !== undefined &&
+      this.getNeighbourRooms(this.player.getPosition()).includes(selectedRoom)
+    );
   }
 
   localFromIndexToID(rowIndex: number, colIndex: number): number {

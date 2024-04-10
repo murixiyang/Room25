@@ -31,7 +31,7 @@ export class RoomComponent {
   @Input() selectable: boolean = false;
   @Input() revealed: boolean = false;
 
-  @Output() roomClicked: EventEmitter<{
+  @Output() triggerRoomClicked: EventEmitter<{
     rowIndex: number;
     colIndex: number;
   }> = new EventEmitter();
@@ -56,7 +56,7 @@ export class RoomComponent {
 
   // Emit the click event with the room position
   handleRoomClicked(): void {
-    this.roomClicked.emit({
+    this.triggerRoomClicked.emit({
       rowIndex: this.rowIndex,
       colIndex: this.colIndex,
     });

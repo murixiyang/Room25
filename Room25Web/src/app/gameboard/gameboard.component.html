@@ -8,7 +8,7 @@
           [id]="room.id"
           [dangerousLevel]="room.dangerousLevel"
           [revealed]="room.revealed"
-          (roomClicked)="handleRoomClicked($event)"
+          (triggerRoomClicked)="handleRoomClicked($event)"
         >
           <app-player
             *ngIf="

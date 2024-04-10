@@ -2,35 +2,35 @@
   <button
     class="action"
     [ngClass]="'action-move'"
-    (click)="gameboard.showAvailableRoomsForAction()"
+    (click)="onClickButton(Action.MOVE)"
   >
     Move
   </button>
   <button
     class="action"
     [ngClass]="'action-peek'"
-    (click)="gameboard.showAvailableRoomsForAction()"
+    (click)="onClickButton(Action.PEEK)"
   >
     Peek
   </button>
   <button
     class="action"
     [ngClass]="'action-push'"
-    (click)="gameboard.showAvailableRoomsForAction()"
+    (click)="onClickButton(Action.PUSH)"
   >
     Push
   </button>
   <button
     class="action"
     [ngClass]="'action-drag'"
-    (click)="gameboard.showAvailableRoomsForAction()"
+    (click)="onClickButton(Action.DRAG)"
   >
     Drag
   </button>
   <button
     class="action"
     [ngClass]="'action-special'"
-    (click)="gameboard.showAvailableRoomsForAction()"
+    (click)="onClickButton(Action.SPECIAL)"
   >
     Special
   </button>
