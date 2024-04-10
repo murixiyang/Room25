@@ -48,10 +48,14 @@ export class RoomComponent {
   }
 
   // Update the opacity based on the transparent state
-  setTransparent(isTransparent: boolean): void {
+  setViewTransparent(isTransparent: boolean): void {
     const roomElement = this.elRef.nativeElement;
     const opacity = isTransparent ? '0.2' : '1';
     this.renderer.setStyle(roomElement, 'opacity', opacity);
+  }
+
+  setViewSelectable(selectable: boolean): void {
+    this.selectable = selectable;
   }
 
   // Emit the click event with the room position

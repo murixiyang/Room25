@@ -153,7 +153,7 @@ export class GameboardComponent {
   private showAvailableRoomsForAction() {
     // Make all rooms transparent
     this.roomViews.forEach((room) => {
-      room.setTransparent(true);
+      room.setViewTransparent(true);
     });
 
     // Make neighbour room not transparent
@@ -161,8 +161,8 @@ export class GameboardComponent {
       // Get roomView
       const roomView = this.getRoomViewFromRoom(room);
 
-      roomView.setTransparent(false);
-      roomView.selectable = true;
+      roomView.setViewTransparent(false);
+      roomView.setViewSelectable(true);
       room.selectable = true;
     });
 
@@ -173,8 +173,9 @@ export class GameboardComponent {
   private showDefulatRoomTransparency() {
     this.roomDistribution.flat().forEach((room) => {
       const roomView = this.getRoomViewFromRoom(room);
-      roomView.setTransparent(false);
-      roomView.selectable = false;
+
+      roomView.setViewTransparent(false);
+      roomView.setViewSelectable(true);
       room.selectable = false;
     });
 
@@ -218,22 +219,18 @@ export class GameboardComponent {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
 
-    const selectedAction = Action.DRAG;
+    const selectedAction = Action.MOVE;
 
     console.log(`Clicked room (${selectedRowIndex}, ${selectedColIndex})`);
 
-    const selectedRoom = this.roomDistribution.flat().find((room) => {
-      return samePosition(room.getPosition(), [
-        selectedRowIndex,
-        selectedColIndex,
-      ]);
-    });
+    const selectedRoom =
+      this.roomDistribution[selectedRowIndex][selectedColIndex];
 
     // Construct the message based on the action and room position
     const message = `Player performed ${selectedAction} in room (${selectedRowIndex} - ${selectedColIndex})`;
 
     // Display the message
-    if (this.selectingRoom && selectedRoom?.selectable) {
+    if (this.selectingRoom && selectedRoom.selectable) {
       console.log(message);
 
       // Perform player action
@@ -253,7 +250,7 @@ export class GameboardComponent {
       // }
 
       // Perform room action
-      this.handleDrag('left');
+      // this.handleDrag('left');
 
       // Recover Room
       this.showDefulatRoomTransparency();
