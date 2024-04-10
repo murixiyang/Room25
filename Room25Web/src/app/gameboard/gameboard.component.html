@@ -17,3 +17,7 @@
     </app-room>
   </div>
 </div>
+
+<ng-container *ngFor="let position of arrowPositions">
+  <div class="arrow" [style.top.px]="position.topPos" [style.left.px]="position.leftPos"></div>
+</ng-container>

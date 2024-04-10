@@ -1,9 +1,9 @@
 import {
   Component,
-  QueryList,
-  ViewChildren,
   Renderer2,
   ElementRef,
+  ViewChildren,
+  QueryList,
 } from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 
@@ -29,17 +29,13 @@ import {
   styleUrl: './gameboard.component.css',
 })
 export class GameboardComponent {
-  @ViewChildren(RoomComponent) roomComponents!: QueryList<RoomComponent>;
+  // Enum
+  Action = Action;
 
-  rows: number[] = [0, 1, 2, 3, 4];
-  cols: number[] = [0, 1, 2, 3, 4];
   player = new PlayerComponent();
 
   // Game status
   selectingRoom = false;
-
-  // Enum
-  Action = Action;
 
   // Game setup
   redNum = 8;
@@ -47,9 +43,15 @@ export class GameboardComponent {
   greenNum = 4;
   blueNum = 2;
 
+  // Room distribution
   roomDistribution: RoomComponent[][] = [];
+  // To modify view of the rooms
+  @ViewChildren(RoomComponent) roomViews!: QueryList<RoomComponent>;
 
+  // Whether the room of the position index is revealed
   roomRevealed: boolean[] = [...Array(25).fill(true)];
+  // The exact position to put arrow when dragging
+  arrowPositions: { topPos: number; leftPos: number }[] = [];
 
   constructor(private renderer: Renderer2, private elRef: ElementRef) {
     // Randomly place rooms
@@ -149,22 +151,25 @@ export class GameboardComponent {
   // For MOVE and PEEK
   private showAvailableRoomsForAction() {
     // Make all rooms transparent
-    this.roomComponents.forEach((room) => {
+    this.roomViews.forEach((room) => {
+      console.log(room);
       room.setTransparent(true);
     });
 
-    // Make neighbour room
+    // Make neighbour room not transparent
     this.getNeighbourRooms(this.player.getPosition()).forEach((room) => {
+      console.log(room);
+
       room.setTransparent(false);
       room.selectable = true;
     });
 
+    // Change phase
     this.selectingRoom = true;
   }
 
-  showDefulatRoomTransparency() {
-    // Make all rooms transparent
-    this.roomComponents.forEach((room) => {
+  private showDefulatRoomTransparency() {
+    this.roomViews.forEach((room) => {
       room.setTransparent(false);
       room.selectable = false;
     });
@@ -174,10 +179,36 @@ export class GameboardComponent {
   private showAvailablePlayerForAction() {}
 
   // For DRAG
-  private showAvailableDirectionForAction() {}
+  private showAvailableDirectionForAction() {
+    console.log('triggered');
+
+    // Find the corresponding room component
+    const [rowIndex, colIndex] = this.player.getPosition();
+
+    const relativeRooms: RoomComponent[] = [];
+    // relativeRooms.push(this.roomComponents[(rowIndex, 0)]);
+
+    this.arrowPositions.push({ topPos: rowIndex * 20, leftPos: 0 }); // Left arrow
+    this.arrowPositions.push({
+      topPos: rowIndex * 20,
+      leftPos: 4 * 20,
+    }); // Right arrow
+
+    // Calculate up and down arrows
+    this.arrowPositions.push({ topPos: 0, leftPos: colIndex * 20 }); // Up arrow
+    this.arrowPositions.push({
+      topPos: 4 * 20,
+      leftPos: colIndex * 20,
+    }); // Down arrow
+  }
 
   // For MOVE, PEEK
   handleRoomClicked(event: { rowIndex: number; colIndex: number }): void {
+    // If not selectingRoom, dont do anything
+    if (!this.selectingRoom) {
+      return;
+    }
+
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
 
@@ -185,23 +216,18 @@ export class GameboardComponent {
 
     console.log(`Clicked room (${selectedRowIndex}, ${selectedColIndex})`);
 
-    const selectedRoom = this.roomComponents.find((room) => {
+    const selectedRoom = this.roomDistribution.flat().find((room) => {
       return samePosition(room.getPosition(), [
         selectedRowIndex,
         selectedColIndex,
       ]);
     });
 
-    // If not selectable, dont do anything
-    if (!selectedRoom?.selectable) {
-      return;
-    }
-
     // Construct the message based on the action and room position
     const message = `Player performed ${selectedAction} in room (${selectedRowIndex} - ${selectedColIndex})`;
 
     // Display the message
-    if (this.selectingRoom && this.isNeighbourToPlayer(selectedRoom)) {
+    if (this.selectingRoom && selectedRoom?.selectable) {
       console.log(message);
 
       // Perform player action
@@ -291,30 +317,17 @@ export class GameboardComponent {
     selectedPosition: [number, number]
   ): RoomComponent[] {
     const [selectedRowIndex, selectedColIndex] = selectedPosition;
-    console.log(selectedPosition);
+    console.log('Get neighbour of: ' + selectedPosition);
     // Filter room components to find neighbor rooms
-    return this.roomComponents.filter((room) => {
-      const [roomRowIndex, roomColIndex] = room.getPosition();
+    return this.roomViews.filter((room) => {
+      const roomPosition = room.getPosition();
       return (
-        (roomRowIndex === selectedRowIndex - 1 &&
-          roomColIndex === selectedColIndex) || // Room above
-        (roomRowIndex === selectedRowIndex + 1 &&
-          roomColIndex === selectedColIndex) || // Room below
-        (roomRowIndex === selectedRowIndex &&
-          roomColIndex === selectedColIndex - 1) || // Room to the left
-        (roomRowIndex === selectedRowIndex &&
-          roomColIndex === selectedColIndex + 1) // Room to the right
+        samePosition(roomPosition, [selectedRowIndex - 1, selectedColIndex]) ||
+        samePosition(roomPosition, [selectedRowIndex + 1, selectedColIndex]) ||
+        samePosition(roomPosition, [selectedRowIndex, selectedColIndex - 1]) ||
+        samePosition(roomPosition, [selectedRowIndex, selectedColIndex + 1])
       );
     });
-  }
-
-  private isNeighbourToPlayer(
-    selectedRoom: RoomComponent | undefined
-  ): boolean {
-    return (
-      selectedRoom !== undefined &&
-      this.getNeighbourRooms(this.player.getPosition()).includes(selectedRoom)
-    );
   }
 
   localFromIndexToID(rowIndex: number, colIndex: number): number {

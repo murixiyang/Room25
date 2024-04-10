@@ -5,3 +5,10 @@
 .room {
   margin: 10px;
 }
+
+.arrow {
+  position: relative;
+  width: 20px;
+  height: 20px;
+  background-color: red; /* Adjust color as needed */
+}
