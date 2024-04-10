@@ -200,25 +200,24 @@ export class GameboardComponent {
     relativeRooms.push(this.roomDistribution[0][colIndex]);
     relativeRooms.push(this.roomDistribution[4][colIndex]);
 
-    // Push
+    // Initial position for arrow
     relativeRooms.forEach((room) => {
       const roomView = this.getRoomViewFromRoom(room);
       roomWidth = roomView.getViewRoomWidth();
       this.arrowPositions.push(roomView.getViewAbsRoomPos());
-
-      console.log(roomView.getViewAbsRoomPos());
     });
 
-    this.arrowPositions[0].topPos += roomWidth * 0.5;
+    // Refine position for arrow
+    this.arrowPositions[0].topPos += roomWidth * 0.3;
     this.arrowPositions[0].leftPos -= roomWidth * 0.75;
 
-    this.arrowPositions[1].topPos += roomWidth * 0.5;
-    this.arrowPositions[1].leftPos += roomWidth * 1.25;
+    this.arrowPositions[1].topPos += roomWidth * 0.3;
+    this.arrowPositions[1].leftPos += roomWidth * 1.2;
 
-    this.arrowPositions[2].topPos -= roomWidth * 0.5;
+    this.arrowPositions[2].topPos -= roomWidth * 0.7;
     this.arrowPositions[2].leftPos += roomWidth * 0.25;
 
-    this.arrowPositions[3].topPos += roomWidth * 1.4;
+    this.arrowPositions[3].topPos += roomWidth * 1.2;
     this.arrowPositions[3].leftPos += roomWidth * 0.25;
   }
 
@@ -232,7 +231,7 @@ export class GameboardComponent {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
 
-    const selectedAction = Action.DRAG;
+    const selectedAction = Action.MOVE;
 
     console.log(`Clicked room (${selectedRowIndex}, ${selectedColIndex})`);
 
@@ -263,7 +262,6 @@ export class GameboardComponent {
       // }
 
       // Perform room action
-      this.handleDrag('left');
 
       // Recover Room
       this.showDefulatRoomTransparency();
@@ -272,13 +270,17 @@ export class GameboardComponent {
 
   handleDrag(direction: 'left' | 'right' | 'up' | 'down') {
     const selectedDirection = direction;
+    // Clear arrow
+    this.arrowPositions = [];
+    console.log(selectedDirection);
     switch (selectedDirection) {
       case 'left':
       case 'right':
-        this.dragRow(this.player.getPosition()[0], selectedDirection);
+        this.dragRow(this.player.getRowIndex(), selectedDirection);
         break;
       case 'up':
       case 'down':
+        this.dragCol(this.player.getColIndex(), selectedDirection);
     }
   }
 
@@ -329,6 +331,53 @@ export class GameboardComponent {
     this.roomDistribution = newRoomDistribution;
   }
 
+  private dragCol(selectedColIndex: number, direction: 'up' | 'down'): void {
+    const newRoomDistribution: RoomComponent[][] = [];
+    // Make deep copy
+    for (let row = 0; row < 5; row++) {
+      newRoomDistribution[row] = [];
+      for (let col = 0; col < 5; col++) {
+        newRoomDistribution[row][col] = this.roomDistribution[row][col];
+      }
+    }
+
+    var movePlayer = false;
+
+    // Change the row
+    for (let row = 0; row < 5; row++) {
+      // Change room
+      const updatedRow =
+        direction === 'up' ? rotateToPositive(row) : rotateToNegative(row);
+      newRoomDistribution[row][selectedColIndex] =
+        this.roomDistribution[updatedRow][selectedColIndex];
+
+      // Persist index
+      newRoomDistribution[row][selectedColIndex].updatePosition(
+        row,
+        selectedColIndex
+      );
+
+      // Check if need to move player
+      if (samePosition([row, selectedColIndex], this.player.getPosition())) {
+        movePlayer = true;
+      }
+    }
+
+    // Move player
+    if (movePlayer) {
+      const [playerRowIndex, playerColIndex] = this.player.getPosition();
+      const updatedRow =
+        direction === 'up'
+          ? rotateToNegative(playerRowIndex)
+          : rotateToPositive(playerRowIndex);
+
+      this.player.updatePosition(updatedRow, playerColIndex);
+    }
+
+    // Update the room distribution
+    this.roomDistribution = newRoomDistribution;
+  }
+
   private getNeighbourRooms(
     selectedPosition: [number, number]
   ): RoomComponent[] {
@@ -354,5 +403,18 @@ export class GameboardComponent {
     return this.roomViews.get(
       fromIndexToID(selectedRoom.getRowIndex(), selectedRoom.getColIndex())
     )!;
+  }
+
+  getDirectionFromArrowIndex(index: number): 'left' | 'right' | 'up' | 'down' {
+    switch (index) {
+      case 0:
+        return 'left';
+      case 1:
+        return 'right';
+      case 2:
+        return 'up';
+      default:
+        return 'down';
+    }
   }
 }

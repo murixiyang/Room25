@@ -18,6 +18,11 @@
   </div>
 </div>
 
-<ng-container *ngFor="let position of arrowPositions">
-  <div class="arrow" [style.top.px]="position.topPos" [style.left.px]="position.leftPos"></div>
+<ng-container *ngFor="let position of arrowPositions; let i = index">
+  <div
+    class="arrow"
+    [style.top.px]="position.topPos"
+    [style.left.px]="position.leftPos"
+    (click)="handleDrag(getDirectionFromArrowIndex(i))"
+  ></div>
 </ng-container>

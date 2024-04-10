@@ -11,4 +11,12 @@
   width: 40px;
   height: 40px;
   background-color: black; /* Adjust color as needed */
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  transform-origin: center;
+}
+
+.arrow:hover {
+  opacity: 0.7;
+  transform: scale(1.05);
 }
