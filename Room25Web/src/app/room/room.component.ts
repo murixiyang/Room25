@@ -54,8 +54,15 @@ export class RoomComponent {
     this.renderer.setStyle(roomElement, 'opacity', opacity);
   }
 
+  // Update the selectable by view
   setViewSelectable(selectable: boolean): void {
     this.selectable = selectable;
+  }
+
+  getViewAbsRoomPos(): { topPos: number; leftPos: number } {
+    const roomElement = this.elRef.nativeElement;
+    const rect = roomElement.getBoundingClientRect();
+    return { topPos: rect.top, leftPos: rect.left };
   }
 
   // Emit the click event with the room position

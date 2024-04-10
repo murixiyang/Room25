@@ -7,8 +7,8 @@
 }
 
 .arrow {
-  position: relative;
+  position: absolute;
   width: 20px;
   height: 20px;
-  background-color: red; /* Adjust color as needed */
+  background-color: black; /* Adjust color as needed */
 }

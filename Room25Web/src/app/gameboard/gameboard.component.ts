@@ -193,20 +193,17 @@ export class GameboardComponent {
     const [rowIndex, colIndex] = this.player.getPosition();
 
     const relativeRooms: RoomComponent[] = [];
-    // relativeRooms.push(this.roomComponents[(rowIndex, 0)]);
+    relativeRooms.push(this.roomDistribution[rowIndex][0]);
+    relativeRooms.push(this.roomDistribution[rowIndex][4]);
+    relativeRooms.push(this.roomDistribution[0][colIndex]);
+    relativeRooms.push(this.roomDistribution[0][colIndex]);
 
-    this.arrowPositions.push({ topPos: rowIndex * 20, leftPos: 0 }); // Left arrow
-    this.arrowPositions.push({
-      topPos: rowIndex * 20,
-      leftPos: 4 * 20,
-    }); // Right arrow
+    relativeRooms.forEach((room) => {
+      const roomView = this.getRoomViewFromRoom(room);
+      this.arrowPositions.push(roomView.getViewAbsRoomPos());
 
-    // Calculate up and down arrows
-    this.arrowPositions.push({ topPos: 0, leftPos: colIndex * 20 }); // Up arrow
-    this.arrowPositions.push({
-      topPos: 4 * 20,
-      leftPos: colIndex * 20,
-    }); // Down arrow
+      console.log(roomView.getViewAbsRoomPos());
+    });
   }
 
   // For MOVE, PEEK
@@ -219,7 +216,7 @@ export class GameboardComponent {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
 
-    const selectedAction = Action.MOVE;
+    const selectedAction = Action.DRAG;
 
     console.log(`Clicked room (${selectedRowIndex}, ${selectedColIndex})`);
 
@@ -250,7 +247,7 @@ export class GameboardComponent {
       // }
 
       // Perform room action
-      // this.handleDrag('left');
+      this.handleDrag('left');
 
       // Recover Room
       this.showDefulatRoomTransparency();
