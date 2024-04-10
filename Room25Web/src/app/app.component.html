@@ -8,8 +8,9 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 <div class="gameboard-container">
-  <app-gameboard #gameboard></app-gameboard>
+  <app-gameboard class="gameboard" #gameboard></app-gameboard>
   <app-action-choose-board
+    class="action-choose-board"
     (triggerActionChoose)="gameboard.handleShowActionTarget($event)"
   ></app-action-choose-board>
 </div>

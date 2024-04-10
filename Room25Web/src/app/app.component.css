@@ -1,5 +1,16 @@
 .gameboard-container {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   height: 100vh;
+}
+
+.gameboard {
+  margin-top: 5%;
+}
+
+.action-choose-board {
+  display: flex;
+  justify-content: center;
+  margin-top: 2%;
 }

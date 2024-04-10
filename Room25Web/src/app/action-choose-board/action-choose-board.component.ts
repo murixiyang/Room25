@@ -16,6 +16,7 @@ export class ActionChooseBoardComponent {
   @Output() triggerActionChoose: EventEmitter<Action> =
     new EventEmitter<Action>();
 
+  // When choose an action
   onClickButton(selectedAction: Action) {
     this.triggerActionChoose.emit(selectedAction);
   }
