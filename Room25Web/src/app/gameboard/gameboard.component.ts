@@ -152,13 +152,17 @@ export class GameboardComponent {
   // For MOVE and PEEK
   private showAvailableRoomsForAction() {
     // Make all rooms transparent
-    // this.roomDistribution.flat().forEach((room) => {
-    //   room.setTransparent(true);
-    // });
+    this.roomViews.forEach((room) => {
+      room.setTransparent(true);
+    });
 
     // Make neighbour room not transparent
     this.getNeighbourRooms(this.player.getPosition()).forEach((room) => {
-      room.setTransparent(true);
+      // Get roomView
+      const roomView = this.getRoomViewFromRoom(room);
+
+      roomView.setTransparent(false);
+      roomView.selectable = true;
       room.selectable = true;
     });
 
@@ -168,9 +172,13 @@ export class GameboardComponent {
 
   private showDefulatRoomTransparency() {
     this.roomDistribution.flat().forEach((room) => {
-      room.setTransparent(false);
+      const roomView = this.getRoomViewFromRoom(room);
+      roomView.setTransparent(false);
+      roomView.selectable = false;
       room.selectable = false;
     });
+
+    this.selectingRoom = true;
   }
 
   // For PUSH
@@ -330,5 +338,11 @@ export class GameboardComponent {
 
   localFromIndexToID(rowIndex: number, colIndex: number): number {
     return fromIndexToID(rowIndex, colIndex);
+  }
+
+  private getRoomViewFromRoom(selectedRoom: RoomComponent): RoomComponent {
+    return this.roomViews.get(
+      fromIndexToID(selectedRoom.getRowIndex(), selectedRoom.getColIndex())
+    )!;
   }
 }
