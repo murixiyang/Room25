@@ -20,6 +20,7 @@
 
 <ng-container *ngFor="let position of arrowPositions; let i = index">
   <div
+    *ngIf="position.available"
     class="arrow"
     [style.top.px]="position.topPos"
     [style.left.px]="position.leftPos"

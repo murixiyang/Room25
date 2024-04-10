@@ -52,7 +52,8 @@ export class GameboardComponent {
   // TODO: Change to false
   roomRevealed: boolean[] = [...Array(25).fill(true)];
   // The exact position to put arrow when dragging
-  arrowPositions: { topPos: number; leftPos: number }[] = [];
+  arrowPositions: { topPos: number; leftPos: number; available: boolean }[] =
+    [];
 
   constructor(private renderer: Renderer2, private elRef: ElementRef) {
     // Randomly place rooms
@@ -204,7 +205,11 @@ export class GameboardComponent {
     relativeRooms.forEach((room) => {
       const roomView = this.getRoomViewFromRoom(room);
       roomWidth = roomView.getViewRoomWidth();
-      this.arrowPositions.push(roomView.getViewAbsRoomPos());
+      this.arrowPositions.push({
+        topPos: roomView.getViewAbsRoomPos().topPos,
+        leftPos: roomView.getViewAbsRoomPos().leftPos,
+        available: true,
+      });
     });
 
     // Refine position for arrow
@@ -219,6 +224,17 @@ export class GameboardComponent {
 
     this.arrowPositions[3].topPos += roomWidth * 1.2;
     this.arrowPositions[3].leftPos += roomWidth * 0.25;
+
+    // centre arrow maynot beens show
+    if (rowIndex === 2) {
+      this.arrowPositions[0].available = false;
+      this.arrowPositions[1].available = false;
+    }
+
+    if (colIndex === 2) {
+      this.arrowPositions[2].available = false;
+      this.arrowPositions[3].available = false;
+    }
   }
 
   // For MOVE, PEEK
