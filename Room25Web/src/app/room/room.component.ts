@@ -50,6 +50,7 @@ export class RoomComponent {
   // Update the opacity based on the transparent state
   setTransparent(isTransparent: boolean): void {
     const roomElement = this.elRef.nativeElement;
+    console.log(roomElement);
     const opacity = isTransparent ? '0.2' : '1';
     this.renderer.setStyle(roomElement, 'opacity', opacity);
   }

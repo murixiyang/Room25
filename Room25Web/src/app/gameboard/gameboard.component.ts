@@ -49,6 +49,7 @@ export class GameboardComponent {
   @ViewChildren(RoomComponent) roomViews!: QueryList<RoomComponent>;
 
   // Whether the room of the position index is revealed
+  // TODO: Change to false
   roomRevealed: boolean[] = [...Array(25).fill(true)];
   // The exact position to put arrow when dragging
   arrowPositions: { topPos: number; leftPos: number }[] = [];
@@ -138,7 +139,7 @@ export class GameboardComponent {
         break;
       case Action.PUSH:
         this.showAvailablePlayerForAction();
-        // Then choose room
+        // TODO: Then choose room
         break;
       case Action.DRAG:
         this.showAvailableDirectionForAction();
@@ -151,16 +152,13 @@ export class GameboardComponent {
   // For MOVE and PEEK
   private showAvailableRoomsForAction() {
     // Make all rooms transparent
-    this.roomViews.forEach((room) => {
-      console.log(room);
-      room.setTransparent(true);
-    });
+    // this.roomDistribution.flat().forEach((room) => {
+    //   room.setTransparent(true);
+    // });
 
     // Make neighbour room not transparent
     this.getNeighbourRooms(this.player.getPosition()).forEach((room) => {
-      console.log(room);
-
-      room.setTransparent(false);
+      room.setTransparent(true);
       room.selectable = true;
     });
 
@@ -169,7 +167,7 @@ export class GameboardComponent {
   }
 
   private showDefulatRoomTransparency() {
-    this.roomViews.forEach((room) => {
+    this.roomDistribution.flat().forEach((room) => {
       room.setTransparent(false);
       room.selectable = false;
     });
@@ -319,7 +317,7 @@ export class GameboardComponent {
     const [selectedRowIndex, selectedColIndex] = selectedPosition;
     console.log('Get neighbour of: ' + selectedPosition);
     // Filter room components to find neighbor rooms
-    return this.roomViews.filter((room) => {
+    return this.roomDistribution.flat().filter((room) => {
       const roomPosition = room.getPosition();
       return (
         samePosition(roomPosition, [selectedRowIndex - 1, selectedColIndex]) ||
