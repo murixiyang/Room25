@@ -65,6 +65,12 @@ export class RoomComponent {
     return { topPos: rect.top, leftPos: rect.left };
   }
 
+  getViewRoomWidth(): number {
+    const roomElement = this.elRef.nativeElement;
+    const rect = roomElement.getBoundingClientRect();
+    return rect.width;
+  }
+
   // Emit the click event with the room position
   handleRoomClicked(): void {
     this.triggerRoomClicked.emit({

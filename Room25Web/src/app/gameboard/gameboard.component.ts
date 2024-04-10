@@ -191,19 +191,35 @@ export class GameboardComponent {
 
     // Find the corresponding room component
     const [rowIndex, colIndex] = this.player.getPosition();
+    var roomWidth = 0;
 
+    // The 4 related rooms
     const relativeRooms: RoomComponent[] = [];
     relativeRooms.push(this.roomDistribution[rowIndex][0]);
     relativeRooms.push(this.roomDistribution[rowIndex][4]);
     relativeRooms.push(this.roomDistribution[0][colIndex]);
-    relativeRooms.push(this.roomDistribution[0][colIndex]);
+    relativeRooms.push(this.roomDistribution[4][colIndex]);
 
+    // Push
     relativeRooms.forEach((room) => {
       const roomView = this.getRoomViewFromRoom(room);
+      roomWidth = roomView.getViewRoomWidth();
       this.arrowPositions.push(roomView.getViewAbsRoomPos());
 
       console.log(roomView.getViewAbsRoomPos());
     });
+
+    this.arrowPositions[0].topPos += roomWidth * 0.5;
+    this.arrowPositions[0].leftPos -= roomWidth * 0.75;
+
+    this.arrowPositions[1].topPos += roomWidth * 0.5;
+    this.arrowPositions[1].leftPos += roomWidth * 1.25;
+
+    this.arrowPositions[2].topPos -= roomWidth * 0.5;
+    this.arrowPositions[2].leftPos += roomWidth * 0.25;
+
+    this.arrowPositions[3].topPos += roomWidth * 1.4;
+    this.arrowPositions[3].leftPos += roomWidth * 0.25;
   }
 
   // For MOVE, PEEK
