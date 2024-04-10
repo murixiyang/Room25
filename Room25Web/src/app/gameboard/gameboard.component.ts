@@ -229,12 +229,15 @@ export class GameboardComponent {
     if (rowIndex === 2) {
       this.arrowPositions[0].available = false;
       this.arrowPositions[1].available = false;
+      console.log('done');
     }
 
     if (colIndex === 2) {
       this.arrowPositions[2].available = false;
       this.arrowPositions[3].available = false;
     }
+
+    // TODO: If drag to opposite before, not available
   }
 
   // For MOVE, PEEK
