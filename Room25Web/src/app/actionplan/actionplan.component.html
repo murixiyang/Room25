@@ -1,1 +1,26 @@
-<p>actionplan works!</p>
+<p class="action-text">Action1:</p>
+<div class="action-place">{{ action1 }}</div>
+
+<p class="action-text">Action2:</p>
+<div class="action-place">{{ action2 }}</div>
+
+<p class="action-text">Action3:</p>
+<div class="action-place" [class.disabled]="!action3Enabled">
+  <button
+    class="confirm-action"
+    *ngIf="!action3Enabled"
+    (click)="enableAction3(true)"
+  >
+    Enable Action3
+  </button>
+  <button
+    class="confirm-action"
+    *ngIf="action3Enabled"
+    (click)="enableAction3(false)"
+  >
+    Disable Action3
+  </button>
+  <div *ngIf="action3Enabled">{{ action3 }}</div>
+</div>
+
+<button class="confirm-action">Confirm action</button>

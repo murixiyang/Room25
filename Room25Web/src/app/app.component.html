@@ -8,11 +8,16 @@
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
 
 <div class="gameboard-container">
-  <app-gameboard class="gameboard" #gameboard></app-gameboard>
-  <app-action-choose-board
-    class="action-choose-board"
-    (triggerActionChoose)="gameboard.handleShowActionTarget($event)"
-  ></app-action-choose-board>
+  <div class="left-column">
+    <app-actionplan class="action-plan"></app-actionplan>
+  </div>
+  <div class="main-column">
+    <app-gameboard class="gameboard" #gameboard></app-gameboard>
+    <app-action-choose-board
+      class="action-choose-board"
+      (triggerActionChoose)="gameboard.handleShowActionTarget($event)"
+    ></app-action-choose-board>
+  </div>
 </div>
 
 <!-- * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * -->
