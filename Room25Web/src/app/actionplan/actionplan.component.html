@@ -1,26 +1,68 @@
-<p class="action-text">Action1:</p>
-<div class="action-place">{{ action1 }}</div>
+<p class="action-text">Action1: {{ action1 }}</p>
+<div class="action-place">
+  <select
+    [(ngModel)]="action1"
+    name="action1"
+    class="action-selector"
+    [ngClass]="ActionClassMap[action1]"
+  >
+    <option
+      *ngFor="let action of selectableActions"
+      [ngValue]="action"
+      class="action-option"
+      [ngClass]="ActionClassMap[action]"
+    >
+      {{ action }}
+    </option>
+  </select>
+</div>
 
-<p class="action-text">Action2:</p>
-<div class="action-place">{{ action2 }}</div>
+<p class="action-text">Action2: {{ action2 }}</p>
+<div class="action-place">
+  <select
+    [(ngModel)]="action2"
+    name="action2"
+    class="action-selector"
+    [ngClass]="ActionClassMap[action2]"
+  >
+    <option
+      *ngFor="let action of selectableActions"
+      [ngValue]="action"
+      class="action-option"
+      [ngClass]="ActionClassMap[action]"
+    >
+      {{ action }}
+    </option>
+  </select>
+</div>
 
-<p class="action-text">Action3:</p>
+<p class="action-text">Action3: {{ action3 }}</p>
 <div class="action-place" [class.disabled]="!action3Enabled">
   <button
-    class="confirm-action"
+    class="enable-action"
     *ngIf="!action3Enabled"
     (click)="enableAction3(true)"
   >
     Enable Action3
   </button>
-  <button
-    class="confirm-action"
-    *ngIf="action3Enabled"
-    (click)="enableAction3(false)"
-  >
-    Disable Action3
-  </button>
-  <div *ngIf="action3Enabled">{{ action3 }}</div>
-</div>
 
-<button class="confirm-action">Confirm action</button>
+  <select
+    *ngIf="action3Enabled"
+    [(ngModel)]="action3"
+    name="action3"
+    class="action-selector"
+    [ngClass]="ActionClassMap[action3]"
+    (change)="enableAction3(action3 !== Action.NONE)"
+  >
+    <option
+      *ngFor="let action of selectableActions"
+      [ngValue]="action"
+      class="action-option"
+      [ngClass]="ActionClassMap[action]"
+    >
+      {{ action }}
+    </option>
+  </select>
+
+  <button class="confirm-action">Confirm action</button>
+</div>

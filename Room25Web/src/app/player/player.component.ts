@@ -16,9 +16,9 @@ export class PlayerComponent {
 
   @Input() survived: boolean = true;
 
-  @Input() action1!: Action;
-  @Input() action2!: Action;
-  @Input() action3!: Action;
+  @Input() action1: Action = Action.NONE;
+  @Input() action2: Action = Action.NONE;
+  @Input() action3: Action = Action.NONE;
 
   constructor() {}
 

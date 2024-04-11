@@ -20,7 +20,7 @@
 }
 
 .action-move {
-  background-color: palevioletred;
+  background-color: lightpink;
 }
 
 .action-peek {
@@ -28,13 +28,17 @@
 }
 
 .action-push {
-  background-color: coral;
+  background-color: lightsalmon;
 }
 
 .action-drag {
-  background-color: darkturquoise;
+  background-color: lightblue;
 }
 
 .action-special {
-  background-color: mediumorchid;
+  background-color: orchid;
+}
+
+.action-none {
+  background-color: lightgrey;
 }
