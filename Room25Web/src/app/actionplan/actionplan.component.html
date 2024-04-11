@@ -7,7 +7,7 @@
     [ngClass]="ActionClassMap[action1]"
   >
     <option
-      *ngFor="let action of selectableActions"
+      *ngFor="let action of getFilteredAction('action1')"
       [ngValue]="action"
       class="action-option"
       [ngClass]="ActionClassMap[action]"
@@ -26,7 +26,7 @@
     [ngClass]="ActionClassMap[action2]"
   >
     <option
-      *ngFor="let action of selectableActions"
+      *ngFor="let action of getFilteredAction('action2')"
       [ngValue]="action"
       class="action-option"
       [ngClass]="ActionClassMap[action]"
@@ -55,7 +55,7 @@
     (change)="enableAction3(action3 !== Action.NONE)"
   >
     <option
-      *ngFor="let action of selectableActions"
+      *ngFor="let action of allActions"
       [ngValue]="action"
       class="action-option"
       [ngClass]="ActionClassMap[action]"

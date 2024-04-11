@@ -23,9 +23,18 @@ export class ActionplanComponent {
   actionFinished: boolean[] = [false, false, false];
   action3Enabled: boolean = false;
 
-  selectableActions: Action[] = Object.values(Action);
+  allActions: Action[] = Object.values(Action);
 
   enableAction3(enabled: boolean): void {
     this.action3Enabled = enabled;
+  }
+
+  getFilteredAction(forAction: 'action1' | 'action2'): Action[] {
+    const againstAction = forAction === 'action1' ? this.action2 : this.action1;
+    const result = this.allActions.filter((action) => action !== againstAction);
+    if (!result.includes(Action.NONE)) {
+      result.push(Action.NONE);
+    }
+    return result;
   }
 }
