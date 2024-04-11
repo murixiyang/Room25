@@ -19,14 +19,36 @@ export class ActionplanComponent {
   action2: Action = Action.NONE;
   action3: Action = Action.NONE;
 
-  actionReady: boolean[] = [false, false, false];
-  actionFinished: boolean[] = [false, false, false];
-  action3Enabled: boolean = false;
+  private actionConfirmed: boolean = false;
+
+  private actionReady: boolean[] = [false, false, false];
+  private actionFinished: boolean[] = [false, false, false];
+  private action3Enabled: boolean = false;
 
   allActions: Action[] = Object.values(Action);
 
-  enableAction3(enabled: boolean): void {
+  setEnableAction3(enabled: boolean): void {
     this.action3Enabled = enabled;
+  }
+
+  getAction3Enabled(): boolean {
+    return this.action3Enabled;
+  }
+
+  confirmAction(): void {
+    this.actionConfirmed = true;
+  }
+
+  getActionConfirmed(): boolean {
+    return this.actionConfirmed;
+  }
+
+  getActionReady(actionNumber: number): boolean {
+    return this.actionReady[actionNumber - 1];
+  }
+
+  getActionFinished(actionNumber: number): boolean {
+    return this.actionFinished[actionNumber - 1];
   }
 
   getFilteredAction(forAction: 'action1' | 'action2'): Action[] {

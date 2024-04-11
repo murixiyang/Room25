@@ -5,6 +5,7 @@
     name="action1"
     class="action-selector"
     [ngClass]="ActionClassMap[action1]"
+    [disabled]="getActionConfirmed()"
   >
     <option
       *ngFor="let action of getFilteredAction('action1')"
@@ -24,6 +25,7 @@
     name="action2"
     class="action-selector"
     [ngClass]="ActionClassMap[action2]"
+    [disabled]="getActionConfirmed()"
   >
     <option
       *ngFor="let action of getFilteredAction('action2')"
@@ -37,22 +39,24 @@
 </div>
 
 <p class="action-text">Action3: {{ action3 }}</p>
-<div class="action-place" [class.disabled]="!action3Enabled">
+<div class="action-place" [class.disabled]="!getAction3Enabled()">
   <button
     class="enable-action"
-    *ngIf="!action3Enabled"
-    (click)="enableAction3(true)"
+    *ngIf="!getAction3Enabled()"
+    (click)="setEnableAction3(true)"
+    [disabled]="getActionConfirmed()"
   >
     Enable Action3
   </button>
 
   <select
-    *ngIf="action3Enabled"
+    *ngIf="getAction3Enabled()"
     [(ngModel)]="action3"
     name="action3"
     class="action-selector"
     [ngClass]="ActionClassMap[action3]"
-    (change)="enableAction3(action3 !== Action.NONE)"
+    (change)="setEnableAction3(action3 !== Action.NONE)"
+    [disabled]="getActionConfirmed()"
   >
     <option
       *ngFor="let action of allActions"
@@ -64,5 +68,11 @@
     </option>
   </select>
 
-  <button class="confirm-action">Confirm action</button>
+  <button
+    class="confirm-action"
+    *ngIf="!getActionConfirmed()"
+    (click)="confirmAction()"
+  >
+    Confirm action
+  </button>
 </div>
