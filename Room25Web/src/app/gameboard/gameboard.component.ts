@@ -63,6 +63,10 @@ export class GameboardComponent {
     this.roomRevealed[12] = true;
   }
 
+  getPlayer(): PlayerComponent {
+    return this.player;
+  }
+
   generateInitialBoard(): void {
     // Create RoomComponent instances and put them in roomDistribution
     for (let row = 0; row < 5; row++) {

@@ -9,7 +9,11 @@
 
 <div class="gameboard-container">
   <div class="row-display">
-    <app-timeline class="timeline"></app-timeline>
+    <app-timeline
+      class="timeline"
+      [player]="gameboard.getPlayer()"
+      #timeline
+    ></app-timeline>
     <div class="column-display">
       <div class="left-column">
         <app-actionplan class="action-plan"></app-actionplan>
