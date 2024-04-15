@@ -39,12 +39,12 @@
 </div>
 
 <p class="action-text">Action3: {{ action3 }}</p>
-<div class="action-place" [class.disabled]="!getAction3Enabled()">
+<div class="action-place">
   <button
     class="enable-action"
     *ngIf="!getAction3Enabled()"
     (click)="setEnableAction3(true)"
-    [disabled]="getActionConfirmed()"
+    [disabled]="getActionConfirmed() && !getAction3Enabled()"
   >
     Enable Action3
   </button>
@@ -56,7 +56,7 @@
     class="action-selector"
     [ngClass]="ActionClassMap[action3]"
     (change)="setEnableAction3(action3 !== Action.NONE)"
-    [disabled]="getActionConfirmed()"
+    [disabled]="!getAction3Enabled()"
   >
     <option
       *ngFor="let action of allActions"
@@ -74,5 +74,13 @@
     (click)="confirmAction()"
   >
     Confirm action
+  </button>
+
+  <!--This button should be shown if player confirm to have action3  -->
+  <button
+    class="confirm-action"
+    *ngIf="getActionConfirmed() && getAction3Enabled()"
+  >
+    Execute Action3
   </button>
 </div>
