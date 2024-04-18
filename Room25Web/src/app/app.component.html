@@ -16,14 +16,20 @@
     ></app-timeline>
     <div class="column-display">
       <div class="left-column">
-        <app-actionplan class="action-plan"></app-actionplan>
+        <app-actionplan
+          class="action-plan"
+          (triggerActionConfirmed)="gameboard.assignAction($event)"
+        ></app-actionplan>
       </div>
       <div class="main-column">
         <app-gameboard class="gameboard" #gameboard></app-gameboard>
-        <app-action-choose-board
+        <!-- <app-action-choose-board
           class="action-choose-board"
           (triggerActionChoose)="gameboard.handleShowActionTarget($event)"
-        ></app-action-choose-board>
+        ></app-action-choose-board> -->
+
+        <p>Action1: {{ gameboard.player.action1 }}</p>
+        <p>Action2: {{ gameboard.player.action2 }}</p>
       </div>
     </div>
   </div>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, EventEmitter, Output } from '@angular/core';
 import { Action } from '../action.enum';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +27,10 @@ export class ActionplanComponent {
 
   allActions: Action[] = Object.values(Action);
 
+  @Output() triggerActionConfirmed: EventEmitter<Action[]> = new EventEmitter<
+    Action[]
+  >();
+
   setEnableAction3(enabled: boolean): void {
     this.action3Enabled = enabled;
   }
@@ -35,8 +39,10 @@ export class ActionplanComponent {
     return this.action3Enabled;
   }
 
+  // When click confirm, lock Action1 and Action2. Then emit
   confirmAction(): void {
     this.actionConfirmed = true;
+    this.triggerActionConfirmed.emit([this.action1, this.action2]);
   }
 
   getActionConfirmed(): boolean {

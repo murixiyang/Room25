@@ -75,8 +75,10 @@ export class GameboardComponent {
     this.roomSvc.revealRoom(this.roomDistribution[2][2]);
   }
 
-  getPlayer(): Player {
-    return this.player;
+  // When receive confirmed action from plan board
+  assignAction(event: Action[]) {
+    this.player.action1 = event[0];
+    this.player.action2 = event[1];
   }
 
   // When action selected
