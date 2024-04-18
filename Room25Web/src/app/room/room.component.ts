@@ -11,7 +11,7 @@ import { NgClass } from '@angular/common';
 
 import { Action } from '../action.enum';
 import { Room } from './room.model';
-import { RoomService } from './room.service';
+import { Position } from '../types/position.model';
 
 @Component({
   selector: 'app-room',
@@ -23,14 +23,7 @@ import { RoomService } from './room.service';
 export class RoomComponent {
   @Input() room!: Room;
 
-  // // Room status
-  // @Input() selectable: boolean = false;
-  // @Input() revealed: boolean = false;
-
-  @Output() triggerRoomClicked: EventEmitter<{
-    rowIndex: number;
-    colIndex: number;
-  }> = new EventEmitter();
+  @Output() triggerRoomClicked: EventEmitter<Position> = new EventEmitter();
 
   // ENUM
   Action = Action;
@@ -44,24 +37,24 @@ export class RoomComponent {
   }
 
   // Update the opacity based on the transparent state
-  setViewTransparent(isTransparent: boolean): void {
+  setTransparent(isTransparent: boolean): void {
     const roomElement = this.elRef.nativeElement;
     const opacity = isTransparent ? '0.2' : '1';
     this.renderer.setStyle(roomElement, 'opacity', opacity);
   }
 
   // Update the selectable by view
-  setViewSelectable(selectable: boolean): void {
+  setSelectable(selectable: boolean): void {
     this.room.selectable = selectable;
   }
 
-  getViewAbsRoomPos(): { topPos: number; leftPos: number } {
+  getAbsRoomPos(): { topPos: number; leftPos: number } {
     const roomElement = this.elRef.nativeElement;
     const rect = roomElement.getBoundingClientRect();
     return { topPos: rect.top, leftPos: rect.left };
   }
 
-  getViewRoomWidth(): number {
+  getRoomWidth(): number {
     const roomElement = this.elRef.nativeElement;
     const rect = roomElement.getBoundingClientRect();
     return rect.width;

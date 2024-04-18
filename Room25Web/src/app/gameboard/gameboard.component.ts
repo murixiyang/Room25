@@ -1,10 +1,4 @@
-import {
-  Component,
-  Renderer2,
-  ElementRef,
-  ViewChildren,
-  QueryList,
-} from '@angular/core';
+import { Component, ViewChildren, QueryList } from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 
 import { RoomComponent } from '../room/room.component';
@@ -58,11 +52,7 @@ export class GameboardComponent {
   arrowPositions: { topPos: number; leftPos: number; available: boolean }[] =
     [];
 
-  constructor(
-    private renderer: Renderer2,
-    private elRef: ElementRef,
-    private roomSvc: RoomService
-  ) {
+  constructor(private roomSvc: RoomService) {
     // Randomly place rooms
     this.generateInitialBoard();
 
@@ -172,7 +162,7 @@ export class GameboardComponent {
   private showAvailableRoomsForAction() {
     // Make all rooms transparent
     this.roomViews.forEach((room) => {
-      room.setViewTransparent(true);
+      room.setTransparent(true);
     });
 
     // Make neighbour room not transparent
@@ -180,9 +170,8 @@ export class GameboardComponent {
       // Get roomView
       const roomView = this.getRoomViewFromRoom(room);
 
-      roomView.setViewTransparent(false);
-      roomView.setViewSelectable(true);
-      room.selectable = true;
+      roomView.setTransparent(false);
+      roomView.setSelectable(true);
     });
 
     // Change phase
@@ -193,9 +182,8 @@ export class GameboardComponent {
     this.roomDistribution.flat().forEach((room) => {
       const roomView = this.getRoomViewFromRoom(room);
 
-      roomView.setViewTransparent(false);
-      roomView.setViewSelectable(true);
-      room.selectable = false;
+      roomView.setTransparent(false);
+      roomView.setSelectable(true);
     });
 
     this.selectingRoom = true;
@@ -222,10 +210,10 @@ export class GameboardComponent {
     // Initial position for arrow
     relativeRooms.forEach((room) => {
       const roomView = this.getRoomViewFromRoom(room);
-      roomWidth = roomView.getViewRoomWidth();
+      roomWidth = roomView.getRoomWidth();
       this.arrowPositions.push({
-        topPos: roomView.getViewAbsRoomPos().topPos,
-        leftPos: roomView.getViewAbsRoomPos().leftPos,
+        topPos: roomView.getAbsRoomPos().topPos,
+        leftPos: roomView.getAbsRoomPos().leftPos,
         available: true,
       });
     });
@@ -437,12 +425,7 @@ export class GameboardComponent {
   }
 
   private getRoomViewFromRoom(selectedRoom: Room): RoomComponent {
-    return this.roomViews.get(
-      fromIndexToID(
-        this.roomSvc.getRowIndex(selectedRoom),
-        this.roomSvc.getColIndex(selectedRoom)
-      )
-    )!;
+    return this.roomViews.get(selectedRoom.id)!;
   }
 
   getDirectionFromArrowIndex(index: number): 'left' | 'right' | 'up' | 'down' {
