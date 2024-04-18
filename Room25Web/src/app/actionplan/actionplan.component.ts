@@ -21,7 +21,7 @@ export class ActionplanComponent {
 
   private actionConfirmed: boolean = false;
 
-  private actionReady: boolean[] = [false, false, false];
+  private actionReady: boolean[] = [true, false, false];
   private actionFinished: boolean[] = [false, false, false];
   private action3Enabled: boolean = false;
 

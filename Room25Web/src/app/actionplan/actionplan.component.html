@@ -1,5 +1,6 @@
-<p class="action-text">Action1: {{ action1 }}</p>
-<div class="action-place">
+<div class="action-place" [ngClass]="{ 'with-border': getActionReady(1) }">
+  <p class="action-text">Action1: {{ action1 }}</p>
+
   <select
     [(ngModel)]="action1"
     name="action1"
@@ -18,8 +19,9 @@
   </select>
 </div>
 
-<p class="action-text">Action2: {{ action2 }}</p>
 <div class="action-place">
+  <p class="action-text">Action2: {{ action2 }}</p>
+
   <select
     [(ngModel)]="action2"
     name="action2"
@@ -38,8 +40,9 @@
   </select>
 </div>
 
-<p class="action-text">Action3: {{ action3 }}</p>
 <div class="action-place">
+  <p class="action-text">Action3: {{ action3 }}</p>
+
   <button
     class="enable-action"
     *ngIf="!getAction3Enabled()"
@@ -67,20 +70,20 @@
       {{ action }}
     </option>
   </select>
-
-  <button
-    class="confirm-action"
-    *ngIf="!getActionConfirmed()"
-    (click)="confirmAction()"
-  >
-    Confirm action
-  </button>
-
-  <!--This button should be shown if player confirm to have action3  -->
-  <button
-    class="confirm-action"
-    *ngIf="getActionConfirmed() && getAction3Enabled()"
-  >
-    Execute Action3
-  </button>
 </div>
+
+<button
+  class="confirm-action"
+  *ngIf="!getActionConfirmed()"
+  (click)="confirmAction()"
+>
+  Confirm action
+</button>
+
+<!--This button should be shown if player confirm to have action3  -->
+<button
+  class="confirm-action"
+  *ngIf="getActionConfirmed() && getAction3Enabled()"
+>
+  Execute Action3
+</button>
