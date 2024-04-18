@@ -6,7 +6,9 @@
   [class.room-grey]="!room.revealed"
 >
   <span class="index"
-    >{{ room.id }}: {{ room.rowIndex }},{{ room.colIndex }}</span
+    >{{ room.id }}: {{ room.roomPos.rowIndex }},{{
+      room.roomPos.colIndex
+    }}</span
   >
   <ng-content></ng-content>
 </div>

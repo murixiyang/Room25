@@ -1,9 +1,9 @@
 import { DangerousLevel } from '../dangerous-level.enum';
 import { LockStatus } from '../lock-status.enum';
+import { Position } from '../types/position.model';
 
 export interface Room {
-  rowIndex: number;
-  colIndex: number;
+  roomPos: Position;
   dangerousLevel: DangerousLevel;
   lockStatus: LockStatus;
   id: number;

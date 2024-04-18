@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action } from '../action.enum';
 import { Player } from './player.model';
+import { Position } from '../types/position.model';
 
 @Injectable({
   providedIn: 'root',
@@ -39,24 +40,11 @@ export class PlayerService {
 
   updatePosition(player: Player, arg2: any, arg3?: any): void {
     if (arg3 !== undefined) {
-      player.rowIndex = arg2;
-      player.colIndex = arg3;
+      player.playerPos.rowIndex = arg2;
+      player.playerPos.colIndex = arg3;
     } else {
-      player.rowIndex = arg2[0];
-      player.colIndex = arg2[1];
+      player.playerPos.rowIndex = arg2[0];
+      player.playerPos.colIndex = arg2[1];
     }
-  }
-
-  // Get player action
-  getRowIndex(player: Player): number {
-    return player.rowIndex;
-  }
-
-  getColIndex(player: Player): number {
-    return player.colIndex;
-  }
-
-  getPosition(player: Player): [number, number] {
-    return [player.rowIndex, player.colIndex];
   }
 }

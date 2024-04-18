@@ -32,7 +32,7 @@ export class RoomComponent {
 
   performAction() {
     console.log(
-      `Room action performed for room at (${this.room.rowIndex}, ${this.room.colIndex})`
+      `Room action performed for room at (${this.room.roomPos.rowIndex}, ${this.room.roomPos.colIndex})`
     );
   }
 
@@ -62,9 +62,6 @@ export class RoomComponent {
 
   // Emit the click event with the room position
   handleRoomClicked(): void {
-    this.triggerRoomClicked.emit({
-      rowIndex: this.room.rowIndex,
-      colIndex: this.room.colIndex,
-    });
+    this.triggerRoomClicked.emit(this.room.roomPos);
   }
 }

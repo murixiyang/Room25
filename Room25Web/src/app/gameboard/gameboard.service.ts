@@ -6,6 +6,7 @@ import fromIndexToID, {
   rotateToPositive,
   samePosition,
   shuffle,
+  toPosition,
 } from '../utils';
 import { DangerousLevel } from '../dangerous-level.enum';
 import { LockStatus } from '../lock-status.enum';
@@ -36,8 +37,7 @@ export class GameboardService {
 
         // Create room
         const room: Room = {
-          rowIndex: row,
-          colIndex: col,
+          roomPos: { rowIndex: row, colIndex: col },
           dangerousLevel: DangerousLevel.GREEN,
           lockStatus: LockStatus.AVAILABLE,
           id: id,
@@ -113,17 +113,16 @@ export class GameboardService {
     });
 
     // Make neighbour room not transparent
-    this.getNeighbourRooms(roomDistribution, [
-      player.rowIndex,
-      player.colIndex,
-    ]).forEach((room) => {
-      console.log('Neighbour id: ', room.id);
-      // Get roomView
-      const roomView = this.getRoomViewFromRoom(roomViews, room);
+    this.getNeighbourRooms(roomDistribution, player.playerPos).forEach(
+      (room) => {
+        console.log('Neighbour id: ', room.id);
+        // Get roomView
+        const roomView = this.getRoomViewFromRoom(roomViews, room);
 
-      roomView.setTransparent(false);
-      roomView.setSelectable(true);
-    });
+        roomView.setTransparent(false);
+        roomView.setSelectable(true);
+      }
+    );
   }
 
   showDefulatRoomTransparency(
@@ -150,7 +149,9 @@ export class GameboardService {
     console.log('triggered');
 
     // Find the corresponding room component
-    const [rowIndex, colIndex] = [player.rowIndex, player.colIndex];
+    const rowIndex = player.playerPos.rowIndex;
+    const colIndex = player.playerPos.colIndex;
+
     var roomWidth = 0;
 
     // The 4 related rooms
@@ -236,7 +237,7 @@ export class GameboardService {
 
     direction: 'left' | 'right'
   ): Room[][] {
-    const selectedRowIndex = this.playerSvc.getRowIndex(player);
+    const selectedRowIndex = player.playerPos.rowIndex;
 
     const newRoomDistribution: Room[][] = [];
     // Make deep copy
@@ -265,20 +266,16 @@ export class GameboardService {
       );
 
       // Check if need to move player
-      if (
-        samePosition(
-          [selectedRowIndex, col],
-          this.playerSvc.getPosition(player)
-        )
-      ) {
+      if (samePosition(toPosition(selectedRowIndex, col), player.playerPos)) {
         movePlayer = true;
       }
     }
 
     // Move player
     if (movePlayer) {
-      const [playerRowIndex, playerColIndex] =
-        this.playerSvc.getPosition(player);
+      const playerRowIndex = player.playerPos.rowIndex;
+      const playerColIndex = player.playerPos.colIndex;
+
       console.log('Current: ', playerRowIndex, playerColIndex);
       const updatedCol =
         direction === 'left'
@@ -298,7 +295,7 @@ export class GameboardService {
     player: Player,
     direction: 'up' | 'down'
   ): Room[][] {
-    const selectedColIndex = this.playerSvc.getColIndex(player);
+    const selectedColIndex = player.playerPos.colIndex;
 
     const newRoomDistribution: Room[][] = [];
     // Make deep copy
@@ -327,20 +324,15 @@ export class GameboardService {
       );
 
       // Check if need to move player
-      if (
-        samePosition(
-          [row, selectedColIndex],
-          this.playerSvc.getPosition(player)
-        )
-      ) {
+      if (samePosition(toPosition(row, selectedColIndex), player.playerPos)) {
         movePlayer = true;
       }
     }
 
     // Move player
     if (movePlayer) {
-      const [playerRowIndex, playerColIndex] =
-        this.playerSvc.getPosition(player);
+      const playerRowIndex = player.playerPos.rowIndex;
+      const playerColIndex = player.playerPos.colIndex;
       const updatedRow =
         direction === 'up'
           ? rotateToNegative(playerRowIndex)
@@ -355,18 +347,32 @@ export class GameboardService {
 
   getNeighbourRooms(
     roomDistribution: Room[][],
-    selectedPosition: [number, number]
+    selectedPosition: Position
   ): Room[] {
-    const [selectedRowIndex, selectedColIndex] = selectedPosition;
+    const selectedRowIndex = selectedPosition.rowIndex;
+    const selectedColIndex = selectedPosition.colIndex;
+
     console.log('Get neighbour of: ' + selectedPosition);
     // Filter room components to find neighbor rooms
     return roomDistribution.flat().filter((room) => {
-      const roomPosition = this.roomSvc.getPosition(room);
+      const roomPosition = room.roomPos;
       return (
-        samePosition(roomPosition, [selectedRowIndex - 1, selectedColIndex]) ||
-        samePosition(roomPosition, [selectedRowIndex + 1, selectedColIndex]) ||
-        samePosition(roomPosition, [selectedRowIndex, selectedColIndex - 1]) ||
-        samePosition(roomPosition, [selectedRowIndex, selectedColIndex + 1])
+        samePosition(
+          roomPosition,
+          toPosition(selectedRowIndex - 1, selectedColIndex)
+        ) ||
+        samePosition(
+          roomPosition,
+          toPosition(selectedRowIndex + 1, selectedColIndex)
+        ) ||
+        samePosition(
+          roomPosition,
+          toPosition(selectedRowIndex, selectedColIndex - 1)
+        ) ||
+        samePosition(
+          roomPosition,
+          toPosition(selectedRowIndex, selectedColIndex + 1)
+        )
       );
     });
   }
@@ -376,7 +382,10 @@ export class GameboardService {
     selectedRoom: Room
   ): RoomComponent {
     return roomViews.get(
-      fromIndexToID(selectedRoom.rowIndex, selectedRoom.colIndex)
+      fromIndexToID(
+        selectedRoom.roomPos.rowIndex,
+        selectedRoom.roomPos.colIndex
+      )
     )!;
   }
 }

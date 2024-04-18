@@ -1,9 +1,9 @@
 import { Action } from '../action.enum';
+import { Position } from '../types/position.model';
 
 export interface Player {
   name: string;
-  rowIndex: number;
-  colIndex: number;
+  playerPos: Position;
 
   survived: boolean;
 

@@ -4,7 +4,8 @@
       <app-player
         [player]="player"
         *ngIf="
-          room.rowIndex === player.rowIndex && room.colIndex === player.colIndex
+          room.roomPos.rowIndex === player.playerPos.rowIndex &&
+          room.roomPos.colIndex === player.playerPos.colIndex
         "
       ></app-player>
     </app-room>

@@ -29,8 +29,11 @@ export class GameboardComponent {
 
   player: Player = {
     name: 'Frank',
-    rowIndex: 2,
-    colIndex: 2,
+    playerPos: {
+      rowIndex: 2,
+      colIndex: 2,
+    },
+
     survived: true,
     action1: Action.NONE,
     action2: Action.NONE,
