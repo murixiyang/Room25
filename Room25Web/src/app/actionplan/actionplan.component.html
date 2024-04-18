@@ -19,7 +19,7 @@
   </select>
 </div>
 
-<div class="action-place">
+<div class="action-place" [ngClass]="{ 'with-border': getActionReady(2) }">
   <p class="action-text">Action2: {{ action2 }}</p>
 
   <select
@@ -40,7 +40,7 @@
   </select>
 </div>
 
-<div class="action-place">
+<div class="action-place" [ngClass]="{ 'with-border': getActionReady(3) }">
   <p class="action-text">Action3: {{ action3 }}</p>
 
   <button
