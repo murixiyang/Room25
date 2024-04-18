@@ -33,4 +33,8 @@ export class RoomService {
   getPosition(room: Room): [number, number] {
     return [room.rowIndex, room.colIndex];
   }
+
+  revealRoom(room: Room): void {
+    room.revealed = true;
+  }
 }

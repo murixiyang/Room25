@@ -5,11 +5,14 @@ export function shuffle<T>(array: T[]): void {
   }
 }
 
-export function fromIndexToID(rowIndex: number, colIndex: number): number {
+export default function fromIndexToViewID(
+  rowIndex: number,
+  colIndex: number
+): number {
   return rowIndex * 5 + colIndex;
 }
 
-export function fromIDToIndex(id: number): [number, number] {
+export function fromViewIDToIndex(id: number): [number, number] {
   return [Math.floor(id / 5), id % 5];
 }
 
