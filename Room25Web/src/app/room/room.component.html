@@ -1,10 +1,12 @@
 <div
   class="room"
-  [ngClass]="'room-' + dangerousLevel.toLowerCase()"
+  [ngClass]="'room-' + room.dangerousLevel.toLowerCase()"
   (click)="handleRoomClicked()"
-  [class.selectable]="selectable"
-  [class.room-grey]="!revealed"
+  [class.selectable]="room.selectable"
+  [class.room-grey]="!room.revealed"
 >
-  <span class="index">{{ id }}: {{ getRowIndex() }},{{ getColIndex() }}</span>
+  <span class="index"
+    >{{ room.id }}: {{ room.rowIndex }},{{ room.colIndex }}</span
+  >
   <ng-content></ng-content>
 </div>

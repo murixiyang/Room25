@@ -9,9 +9,9 @@ import {
 
 import { NgClass } from '@angular/common';
 
-import { DangerousLevel } from '../dangerous-level.enum';
 import { Action } from '../action.enum';
-import { LockStatus } from '../lock-status.enum';
+import { Room } from './room.model';
+import { RoomService } from './room.service';
 
 @Component({
   selector: 'app-room',
@@ -21,15 +21,11 @@ import { LockStatus } from '../lock-status.enum';
   styleUrl: './room.component.css',
 })
 export class RoomComponent {
-  @Input() dangerousLevel: DangerousLevel = DangerousLevel.GREEN;
-  @Input() lockStatus: LockStatus = LockStatus.AVAILABLE;
-  @Input() id: number = 0;
-  @Input() rowIndex: number = 0;
-  @Input() colIndex: number = 0;
+  @Input() room!: Room;
 
-  // Room status
-  @Input() selectable: boolean = false;
-  @Input() revealed: boolean = false;
+  // // Room status
+  // @Input() selectable: boolean = false;
+  // @Input() revealed: boolean = false;
 
   @Output() triggerRoomClicked: EventEmitter<{
     rowIndex: number;
@@ -43,7 +39,7 @@ export class RoomComponent {
 
   performAction() {
     console.log(
-      `Room action performed for room at (${this.rowIndex}, ${this.colIndex})`
+      `Room action performed for room at (${this.room.rowIndex}, ${this.room.colIndex})`
     );
   }
 
@@ -56,7 +52,7 @@ export class RoomComponent {
 
   // Update the selectable by view
   setViewSelectable(selectable: boolean): void {
-    this.selectable = selectable;
+    this.room.selectable = selectable;
   }
 
   getViewAbsRoomPos(): { topPos: number; leftPos: number } {
@@ -74,35 +70,8 @@ export class RoomComponent {
   // Emit the click event with the room position
   handleRoomClicked(): void {
     this.triggerRoomClicked.emit({
-      rowIndex: this.rowIndex,
-      colIndex: this.colIndex,
+      rowIndex: this.room.rowIndex,
+      colIndex: this.room.colIndex,
     });
-  }
-
-  // Overload updatePosition
-  updatePosition(rowIndex: number, colIndex: number): void;
-  updatePosition(position: [number, number]): void;
-
-  updatePosition(arg1: any, arg2?: number): void {
-    if (arg2 !== undefined) {
-      this.rowIndex = arg1;
-      this.colIndex = arg2;
-    } else {
-      this.rowIndex = arg1[0];
-      this.colIndex = arg1[1];
-    }
-  }
-
-  // Get room position
-  getRowIndex(): number {
-    return this.rowIndex;
-  }
-
-  getColIndex(): number {
-    return this.colIndex;
-  }
-
-  getPosition(): [number, number] {
-    return [this.rowIndex, this.colIndex];
   }
 }

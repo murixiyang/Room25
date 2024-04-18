@@ -20,6 +20,9 @@ import {
   shuffle,
   rotateToPositive,
 } from '../utils';
+import { Room } from '../room/room.model';
+import { LockStatus } from '../lock-status.enum';
+import { RoomService } from '../room/room.service';
 
 @Component({
   selector: 'app-gameboard',
@@ -44,7 +47,7 @@ export class GameboardComponent {
   blueNum = 2;
 
   // Room distribution
-  roomDistribution: RoomComponent[][] = [];
+  roomDistribution: Room[][] = [];
   // To modify view of the rooms
   @ViewChildren(RoomComponent) roomViews!: QueryList<RoomComponent>;
 
@@ -55,7 +58,11 @@ export class GameboardComponent {
   arrowPositions: { topPos: number; leftPos: number; available: boolean }[] =
     [];
 
-  constructor(private renderer: Renderer2, private elRef: ElementRef) {
+  constructor(
+    private renderer: Renderer2,
+    private elRef: ElementRef,
+    private roomSvc: RoomService
+  ) {
     // Randomly place rooms
     this.generateInitialBoard();
 
@@ -72,12 +79,19 @@ export class GameboardComponent {
     for (let row = 0; row < 5; row++) {
       this.roomDistribution[row] = [];
       for (let col = 0; col < 5; col++) {
-        const room = new RoomComponent(this.renderer, this.elRef);
-        room.updatePosition(row, col);
-
         const id = fromIndexToID(row, col);
-        room.id = id;
-        room.revealed = this.roomRevealed[id];
+
+        // Create room
+        const room: Room = {
+          rowIndex: row,
+          colIndex: col,
+          dangerousLevel: DangerousLevel.GREEN,
+          lockStatus: LockStatus.AVAILABLE,
+          id: id,
+          revealed: this.roomRevealed[id],
+          selectable: false,
+        };
+
         this.roomDistribution[row][col] = room;
       }
     }
@@ -199,7 +213,7 @@ export class GameboardComponent {
     var roomWidth = 0;
 
     // The 4 related rooms
-    const relativeRooms: RoomComponent[] = [];
+    const relativeRooms: Room[] = [];
     relativeRooms.push(this.roomDistribution[rowIndex][0]);
     relativeRooms.push(this.roomDistribution[rowIndex][4]);
     relativeRooms.push(this.roomDistribution[0][colIndex]);
@@ -308,7 +322,7 @@ export class GameboardComponent {
   }
 
   private dragRow(selectedRowIndex: number, direction: 'left' | 'right'): void {
-    const newRoomDistribution: RoomComponent[][] = [];
+    const newRoomDistribution: Room[][] = [];
     // Make deep copy
     for (let row = 0; row < 5; row++) {
       newRoomDistribution[row] = [];
@@ -328,7 +342,8 @@ export class GameboardComponent {
         this.roomDistribution[selectedRowIndex][updatedCol];
 
       // Persist index
-      newRoomDistribution[selectedRowIndex][col].updatePosition(
+      this.roomSvc.updatePosition(
+        newRoomDistribution[selectedRowIndex][col],
         selectedRowIndex,
         col
       );
@@ -355,7 +370,7 @@ export class GameboardComponent {
   }
 
   private dragCol(selectedColIndex: number, direction: 'up' | 'down'): void {
-    const newRoomDistribution: RoomComponent[][] = [];
+    const newRoomDistribution: Room[][] = [];
     // Make deep copy
     for (let row = 0; row < 5; row++) {
       newRoomDistribution[row] = [];
@@ -375,7 +390,8 @@ export class GameboardComponent {
         this.roomDistribution[updatedRow][selectedColIndex];
 
       // Persist index
-      newRoomDistribution[row][selectedColIndex].updatePosition(
+      this.roomSvc.updatePosition(
+        newRoomDistribution[row][selectedColIndex],
         row,
         selectedColIndex
       );
@@ -401,14 +417,12 @@ export class GameboardComponent {
     this.roomDistribution = newRoomDistribution;
   }
 
-  private getNeighbourRooms(
-    selectedPosition: [number, number]
-  ): RoomComponent[] {
+  private getNeighbourRooms(selectedPosition: [number, number]): Room[] {
     const [selectedRowIndex, selectedColIndex] = selectedPosition;
     console.log('Get neighbour of: ' + selectedPosition);
     // Filter room components to find neighbor rooms
     return this.roomDistribution.flat().filter((room) => {
-      const roomPosition = room.getPosition();
+      const roomPosition = this.roomSvc.getPosition(room);
       return (
         samePosition(roomPosition, [selectedRowIndex - 1, selectedColIndex]) ||
         samePosition(roomPosition, [selectedRowIndex + 1, selectedColIndex]) ||
@@ -422,9 +436,12 @@ export class GameboardComponent {
     return fromIndexToID(rowIndex, colIndex);
   }
 
-  private getRoomViewFromRoom(selectedRoom: RoomComponent): RoomComponent {
+  private getRoomViewFromRoom(selectedRoom: Room): RoomComponent {
     return this.roomViews.get(
-      fromIndexToID(selectedRoom.getRowIndex(), selectedRoom.getColIndex())
+      fromIndexToID(
+        this.roomSvc.getRowIndex(selectedRoom),
+        this.roomSvc.getColIndex(selectedRoom)
+      )
     )!;
   }
 

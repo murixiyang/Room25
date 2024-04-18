@@ -1,17 +1,10 @@
 <div *ngFor="let row of roomDistribution" class="board-row">
   <div *ngFor="let room of row" class="room">
-    <app-room
-      [rowIndex]="room.getRowIndex()"
-      [colIndex]="room.getColIndex()"
-      [id]="room.id"
-      [dangerousLevel]="room.dangerousLevel"
-      [revealed]="room.revealed"
-      (triggerRoomClicked)="handleRoomClicked($event)"
-    >
+    <app-room [room]="room" (triggerRoomClicked)="handleRoomClicked($event)">
       <app-player
         *ngIf="
-          room.getRowIndex() === player.getRowIndex() &&
-          room.getColIndex() === player.getColIndex()
+          room.rowIndex === player.getRowIndex() &&
+          room.colIndex === player.getColIndex()
         "
       ></app-player>
     </app-room>
