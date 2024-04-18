@@ -1,5 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { PlayerComponent } from '../player/player.component';
+import { Player } from '../player/player.model';
 
 @Component({
   selector: 'app-timeline',
@@ -15,7 +16,7 @@ export class TimelineComponent {
   // Action1 or 2 or 3
   @Input() private currentPhase: 1 | 2 | 3 = 1;
 
-  @Input() player!: PlayerComponent;
+  @Input() player!: Player;
 
   getTotalRound(): number {
     return this.totalRound;

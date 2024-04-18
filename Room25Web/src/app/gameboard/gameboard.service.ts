@@ -2,6 +2,8 @@ import { Injectable, QueryList } from '@angular/core';
 import { Room } from '../room/room.model';
 import fromIndexToID, {
   fromViewIDToIndex,
+  rotateToNegative,
+  rotateToPositive,
   samePosition,
   shuffle,
 } from '../utils';
@@ -10,15 +12,17 @@ import { LockStatus } from '../lock-status.enum';
 import { RoomColorNum } from '../types/roomColorNum.model';
 import { RoomComponent } from '../room/room.component';
 import { RoomService } from '../room/room.service';
-import { PlayerComponent } from '../player/player.component';
 import { ArrowPosition } from '../types/arrowPosition.model';
 import { Player } from '../player/player.model';
+import { Position } from '../types/position.model';
+import { Action } from '../action.enum';
+import { PlayerService } from '../player/player.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class GameboardService {
-  constructor(private roomSvc: RoomService) {}
+  constructor(private roomSvc: RoomService, private playerSvc: PlayerService) {}
 
   generateInitialBoard(
     roomDistribution: Room[][],
@@ -130,7 +134,7 @@ export class GameboardService {
       const roomView = this.getRoomViewFromRoom(roomViews, room);
 
       roomView.setTransparent(false);
-      roomView.setSelectable(true);
+      roomView.setSelectable(false);
     });
   }
 
@@ -194,6 +198,159 @@ export class GameboardService {
     // TODO: If drag to opposite before, not available
 
     return arrowPositions;
+  }
+
+  selectRoom(
+    roomDistribution: Room[][],
+    roomViews: QueryList<RoomComponent>,
+    player: Player,
+    selectedPosition: Position,
+    selectedAction: Action
+  ) {
+    // Perform player action
+    this.playerSvc.performAction(
+      player,
+      selectedAction,
+      selectedPosition.rowIndex,
+      selectedPosition.colIndex
+    );
+
+    // If move/push into an unrevealed room, reveal it
+    // if (
+    //   !this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] &&
+    //   (selectedAction === Action.MOVE || selectedAction === Action.PUSH)
+    // ) {
+    //   this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] =
+    //     true;
+    // }
+
+    // Perform room action
+
+    // Recover Room
+    this.showDefulatRoomTransparency(roomDistribution, roomViews);
+  }
+
+  dragRow(
+    roomDistribution: Room[][],
+    player: Player,
+
+    direction: 'left' | 'right'
+  ): Room[][] {
+    const selectedRowIndex = this.playerSvc.getRowIndex(player);
+
+    const newRoomDistribution: Room[][] = [];
+    // Make deep copy
+    for (let row = 0; row < 5; row++) {
+      newRoomDistribution[row] = [];
+      for (let col = 0; col < 5; col++) {
+        newRoomDistribution[row][col] = roomDistribution[row][col];
+      }
+    }
+
+    var movePlayer = false;
+
+    // Change the row
+    for (let col = 0; col < 5; col++) {
+      // Change room
+      const updatedCol =
+        direction === 'left' ? rotateToPositive(col) : rotateToNegative(col);
+      newRoomDistribution[selectedRowIndex][col] =
+        roomDistribution[selectedRowIndex][updatedCol];
+
+      // Persist index
+      this.roomSvc.updatePosition(
+        newRoomDistribution[selectedRowIndex][col],
+        selectedRowIndex,
+        col
+      );
+
+      // Check if need to move player
+      if (
+        samePosition(
+          [selectedRowIndex, col],
+          this.playerSvc.getPosition(player)
+        )
+      ) {
+        movePlayer = true;
+      }
+    }
+
+    // Move player
+    if (movePlayer) {
+      const [playerRowIndex, playerColIndex] =
+        this.playerSvc.getPosition(player);
+      console.log('Current: ', playerRowIndex, playerColIndex);
+      const updatedCol =
+        direction === 'left'
+          ? rotateToNegative(playerColIndex)
+          : rotateToPositive(playerColIndex);
+
+      this.playerSvc.updatePosition(player, playerRowIndex, updatedCol);
+      console.log('Update: ', playerRowIndex, updatedCol);
+    }
+
+    // Update the room distribution
+    return newRoomDistribution;
+  }
+
+  dragCol(
+    roomDistribution: Room[][],
+    player: Player,
+    direction: 'up' | 'down'
+  ): Room[][] {
+    const selectedColIndex = this.playerSvc.getColIndex(player);
+
+    const newRoomDistribution: Room[][] = [];
+    // Make deep copy
+    for (let row = 0; row < 5; row++) {
+      newRoomDistribution[row] = [];
+      for (let col = 0; col < 5; col++) {
+        newRoomDistribution[row][col] = roomDistribution[row][col];
+      }
+    }
+
+    var movePlayer = false;
+
+    // Change the row
+    for (let row = 0; row < 5; row++) {
+      // Change room
+      const updatedRow =
+        direction === 'up' ? rotateToPositive(row) : rotateToNegative(row);
+      newRoomDistribution[row][selectedColIndex] =
+        roomDistribution[updatedRow][selectedColIndex];
+
+      // Persist index
+      this.roomSvc.updatePosition(
+        newRoomDistribution[row][selectedColIndex],
+        row,
+        selectedColIndex
+      );
+
+      // Check if need to move player
+      if (
+        samePosition(
+          [row, selectedColIndex],
+          this.playerSvc.getPosition(player)
+        )
+      ) {
+        movePlayer = true;
+      }
+    }
+
+    // Move player
+    if (movePlayer) {
+      const [playerRowIndex, playerColIndex] =
+        this.playerSvc.getPosition(player);
+      const updatedRow =
+        direction === 'up'
+          ? rotateToNegative(playerRowIndex)
+          : rotateToPositive(playerRowIndex);
+
+      this.playerSvc.updatePosition(player, updatedRow, playerColIndex);
+    }
+
+    // Update the room distribution
+    return newRoomDistribution;
   }
 
   getNeighbourRooms(

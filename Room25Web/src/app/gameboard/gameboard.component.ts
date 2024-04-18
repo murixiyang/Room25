@@ -76,6 +76,7 @@ export class GameboardComponent {
     return this.player;
   }
 
+  // When action selected
   handleShowActionTarget(action: Action) {
     switch (action) {
       case Action.MOVE:
@@ -129,30 +130,15 @@ export class GameboardComponent {
     if (this.selectingRoom && selectedRoom.selectable) {
       console.log(message);
 
-      // Perform player action
-      this.playerSvc.performAction(
-        this.player,
-        selectedAction,
-        selectedRowIndex,
-        selectedColIndex
-      );
-
-      // If move/push into an unrevealed room, reveal it
-      // if (
-      //   !this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] &&
-      //   (selectedAction === Action.MOVE || selectedAction === Action.PUSH)
-      // ) {
-      //   this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] =
-      //     true;
-      // }
-
-      // Perform room action
-
-      // Recover Room
-      this.gameboardSvc.showDefulatRoomTransparency(
+      // Move player and cleanup format
+      this.gameboardSvc.selectRoom(
         this.roomDistribution,
-        this.roomViews
+        this.roomViews,
+        this.player,
+        event,
+        selectedAction
       );
+
       // Change phase
       this.selectingRoom = false;
     }
@@ -166,136 +152,24 @@ export class GameboardComponent {
     switch (selectedDirection) {
       case 'left':
       case 'right':
-        this.dragRow(
-          this.playerSvc.getRowIndex(this.player),
+        this.roomDistribution = this.gameboardSvc.dragRow(
+          this.roomDistribution,
+          this.player,
           selectedDirection
         );
         break;
       case 'up':
       case 'down':
-        this.dragCol(
-          this.playerSvc.getColIndex(this.player),
+        this.roomDistribution = this.gameboardSvc.dragCol(
+          this.roomDistribution,
+          this.player,
           selectedDirection
         );
     }
   }
 
-  private dragRow(selectedRowIndex: number, direction: 'left' | 'right'): void {
-    const newRoomDistribution: Room[][] = [];
-    // Make deep copy
-    for (let row = 0; row < 5; row++) {
-      newRoomDistribution[row] = [];
-      for (let col = 0; col < 5; col++) {
-        newRoomDistribution[row][col] = this.roomDistribution[row][col];
-      }
-    }
-
-    var movePlayer = false;
-
-    // Change the row
-    for (let col = 0; col < 5; col++) {
-      // Change room
-      const updatedCol =
-        direction === 'left' ? rotateToPositive(col) : rotateToNegative(col);
-      newRoomDistribution[selectedRowIndex][col] =
-        this.roomDistribution[selectedRowIndex][updatedCol];
-
-      // Persist index
-      this.roomSvc.updatePosition(
-        newRoomDistribution[selectedRowIndex][col],
-        selectedRowIndex,
-        col
-      );
-
-      // Check if need to move player
-      if (
-        samePosition(
-          [selectedRowIndex, col],
-          this.playerSvc.getPosition(this.player)
-        )
-      ) {
-        movePlayer = true;
-      }
-    }
-
-    // Move player
-    if (movePlayer) {
-      const [playerRowIndex, playerColIndex] = this.playerSvc.getPosition(
-        this.player
-      );
-      const updatedCol =
-        direction === 'left'
-          ? rotateToNegative(playerColIndex)
-          : rotateToPositive(playerColIndex);
-
-      this.playerSvc.updatePosition(this.player, playerRowIndex, updatedCol);
-    }
-
-    // Update the room distribution
-    this.roomDistribution = newRoomDistribution;
-  }
-
-  private dragCol(selectedColIndex: number, direction: 'up' | 'down'): void {
-    const newRoomDistribution: Room[][] = [];
-    // Make deep copy
-    for (let row = 0; row < 5; row++) {
-      newRoomDistribution[row] = [];
-      for (let col = 0; col < 5; col++) {
-        newRoomDistribution[row][col] = this.roomDistribution[row][col];
-      }
-    }
-
-    var movePlayer = false;
-
-    // Change the row
-    for (let row = 0; row < 5; row++) {
-      // Change room
-      const updatedRow =
-        direction === 'up' ? rotateToPositive(row) : rotateToNegative(row);
-      newRoomDistribution[row][selectedColIndex] =
-        this.roomDistribution[updatedRow][selectedColIndex];
-
-      // Persist index
-      this.roomSvc.updatePosition(
-        newRoomDistribution[row][selectedColIndex],
-        row,
-        selectedColIndex
-      );
-
-      // Check if need to move player
-      if (
-        samePosition(
-          [row, selectedColIndex],
-          this.playerSvc.getPosition(this.player)
-        )
-      ) {
-        movePlayer = true;
-      }
-    }
-
-    // Move player
-    if (movePlayer) {
-      const [playerRowIndex, playerColIndex] = this.playerSvc.getPosition(
-        this.player
-      );
-      const updatedRow =
-        direction === 'up'
-          ? rotateToNegative(playerRowIndex)
-          : rotateToPositive(playerRowIndex);
-
-      this.playerSvc.updatePosition(this.player, updatedRow, playerColIndex);
-    }
-
-    // Update the room distribution
-    this.roomDistribution = newRoomDistribution;
-  }
-
   localFromIndexToID(rowIndex: number, colIndex: number): number {
     return fromIndexToID(rowIndex, colIndex);
-  }
-
-  private getRoomViewFromRoom(selectedRoom: Room): RoomComponent {
-    return this.roomViews.get(selectedRoom.id)!;
   }
 
   getDirectionFromArrowIndex(index: number): 'left' | 'right' | 'up' | 'down' {
