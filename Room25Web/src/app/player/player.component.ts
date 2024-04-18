@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { Action } from '../action.enum';
 import { RoomComponent } from '../room/room.component';
+import { Player } from './player.model';
 
 @Component({
   selector: 'app-player',
@@ -10,42 +11,9 @@ import { RoomComponent } from '../room/room.component';
   styleUrl: './player.component.css',
 })
 export class PlayerComponent {
-  @Input() name: string = 'Frank';
-  private rowIndex: number = 2;
-  private colIndex: number = 2;
-
-  @Input() survived: boolean = true;
-
-  @Input() action1: Action = Action.NONE;
-  @Input() action2: Action = Action.NONE;
-  @Input() action3: Action = Action.NONE;
+  @Input() player!: Player;
 
   constructor() {}
-
-  // Perform user side action
-  performAction(
-    selectedAction: Action,
-    selectedRowIndex: number,
-    selectedColIndex: number
-  ) {
-    switch (selectedAction) {
-      case Action.MOVE:
-        this.updatePosition(selectedRowIndex, selectedColIndex);
-        break;
-
-      case Action.PEEK:
-        console.log('This room is GREEN!');
-        break;
-      case Action.PUSH:
-        break;
-      case Action.DRAG:
-        break;
-      case Action.SPECIAL:
-        break;
-      default:
-        break;
-    }
-  }
 
   // Overload updatePosition
   updatePosition(rowIndex: number, colIndex: number): void;
@@ -53,24 +21,24 @@ export class PlayerComponent {
 
   updatePosition(arg1: any, arg2?: any): void {
     if (arg2 !== undefined) {
-      this.rowIndex = arg1;
-      this.colIndex = arg2;
+      this.player.rowIndex = arg1;
+      this.player.colIndex = arg2;
     } else {
-      this.rowIndex = arg1[0];
-      this.colIndex = arg1[1];
+      this.player.rowIndex = arg1[0];
+      this.player.colIndex = arg1[1];
     }
   }
 
   // Get player action
   getRowIndex(): number {
-    return this.rowIndex;
+    return this.player.rowIndex;
   }
 
   getColIndex(): number {
-    return this.colIndex;
+    return this.player.colIndex;
   }
 
   getPosition(): [number, number] {
-    return [this.rowIndex, this.colIndex];
+    return [this.player.rowIndex, this.player.colIndex];
   }
 }

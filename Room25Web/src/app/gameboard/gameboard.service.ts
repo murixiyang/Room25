@@ -8,12 +8,11 @@ import fromIndexToID, {
 import { DangerousLevel } from '../dangerous-level.enum';
 import { LockStatus } from '../lock-status.enum';
 import { RoomColorNum } from '../types/roomColorNum.model';
-import { Action } from '../action.enum';
 import { RoomComponent } from '../room/room.component';
 import { RoomService } from '../room/room.service';
-import { Position } from '../types/position.model';
 import { PlayerComponent } from '../player/player.component';
 import { ArrowPosition } from '../types/arrowPosition.model';
+import { Player } from '../player/player.model';
 
 @Injectable({
   providedIn: 'root',
@@ -102,7 +101,7 @@ export class GameboardService {
   showAvailableRoomsForAction(
     roomDistribution: Room[][],
     roomViews: QueryList<RoomComponent>,
-    player: PlayerComponent
+    player: Player
   ) {
     // Make all rooms transparent
     roomViews.forEach((room) => {
@@ -110,16 +109,17 @@ export class GameboardService {
     });
 
     // Make neighbour room not transparent
-    this.getNeighbourRooms(roomDistribution, player.getPosition()).forEach(
-      (room) => {
-        console.log('Neighbour id: ', room.id);
-        // Get roomView
-        const roomView = this.getRoomViewFromRoom(roomViews, room);
+    this.getNeighbourRooms(roomDistribution, [
+      player.rowIndex,
+      player.colIndex,
+    ]).forEach((room) => {
+      console.log('Neighbour id: ', room.id);
+      // Get roomView
+      const roomView = this.getRoomViewFromRoom(roomViews, room);
 
-        roomView.setTransparent(false);
-        roomView.setSelectable(true);
-      }
-    );
+      roomView.setTransparent(false);
+      roomView.setSelectable(true);
+    });
   }
 
   showDefulatRoomTransparency(
@@ -141,12 +141,12 @@ export class GameboardService {
   showAvailableDirectionForAction(
     roomDistribution: Room[][],
     roomViews: QueryList<RoomComponent>,
-    player: PlayerComponent
+    player: Player
   ): ArrowPosition[] {
     console.log('triggered');
 
     // Find the corresponding room component
-    const [rowIndex, colIndex] = player.getPosition();
+    const [rowIndex, colIndex] = [player.rowIndex, player.colIndex];
     var roomWidth = 0;
 
     // The 4 related rooms

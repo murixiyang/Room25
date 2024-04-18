@@ -2,9 +2,9 @@
   <div *ngFor="let room of row" class="room">
     <app-room [room]="room" (triggerRoomClicked)="handleRoomClicked($event)">
       <app-player
+        [player]="player"
         *ngIf="
-          room.rowIndex === player.getRowIndex() &&
-          room.colIndex === player.getColIndex()
+          room.rowIndex === player.rowIndex && room.colIndex === player.colIndex
         "
       ></app-player>
     </app-room>

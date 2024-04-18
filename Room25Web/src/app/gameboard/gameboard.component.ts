@@ -13,6 +13,8 @@ import { RoomService } from '../room/room.service';
 import { GameboardService } from './gameboard.service';
 import { RoomColorNum } from '../types/roomColorNum.model';
 import { ArrowPosition } from '../types/arrowPosition.model';
+import { Player } from '../player/player.model';
+import { PlayerService } from '../player/player.service';
 
 @Component({
   selector: 'app-gameboard',
@@ -25,7 +27,15 @@ export class GameboardComponent {
   // Enum
   Action = Action;
 
-  player = new PlayerComponent();
+  player: Player = {
+    name: 'Frank',
+    rowIndex: 2,
+    colIndex: 2,
+    survived: true,
+    action1: Action.NONE,
+    action2: Action.NONE,
+    action3: Action.NONE,
+  };
 
   // Game status
   selectingRoom = false;
@@ -49,6 +59,7 @@ export class GameboardComponent {
 
   constructor(
     private roomSvc: RoomService,
+    private playerSvc: PlayerService,
     private gameboardSvc: GameboardService
   ) {
     // Randomly place rooms
@@ -61,7 +72,7 @@ export class GameboardComponent {
     this.roomSvc.revealRoom(this.roomDistribution[2][2]);
   }
 
-  getPlayer(): PlayerComponent {
+  getPlayer(): Player {
     return this.player;
   }
 
@@ -119,7 +130,8 @@ export class GameboardComponent {
       console.log(message);
 
       // Perform player action
-      this.player.performAction(
+      this.playerSvc.performAction(
+        this.player,
         selectedAction,
         selectedRowIndex,
         selectedColIndex
@@ -154,11 +166,17 @@ export class GameboardComponent {
     switch (selectedDirection) {
       case 'left':
       case 'right':
-        this.dragRow(this.player.getRowIndex(), selectedDirection);
+        this.dragRow(
+          this.playerSvc.getRowIndex(this.player),
+          selectedDirection
+        );
         break;
       case 'up':
       case 'down':
-        this.dragCol(this.player.getColIndex(), selectedDirection);
+        this.dragCol(
+          this.playerSvc.getColIndex(this.player),
+          selectedDirection
+        );
     }
   }
 
@@ -190,20 +208,27 @@ export class GameboardComponent {
       );
 
       // Check if need to move player
-      if (samePosition([selectedRowIndex, col], this.player.getPosition())) {
+      if (
+        samePosition(
+          [selectedRowIndex, col],
+          this.playerSvc.getPosition(this.player)
+        )
+      ) {
         movePlayer = true;
       }
     }
 
     // Move player
     if (movePlayer) {
-      const [playerRowIndex, playerColIndex] = this.player.getPosition();
+      const [playerRowIndex, playerColIndex] = this.playerSvc.getPosition(
+        this.player
+      );
       const updatedCol =
         direction === 'left'
           ? rotateToNegative(playerColIndex)
           : rotateToPositive(playerColIndex);
 
-      this.player.updatePosition(playerRowIndex, updatedCol);
+      this.playerSvc.updatePosition(this.player, playerRowIndex, updatedCol);
     }
 
     // Update the room distribution
@@ -238,20 +263,27 @@ export class GameboardComponent {
       );
 
       // Check if need to move player
-      if (samePosition([row, selectedColIndex], this.player.getPosition())) {
+      if (
+        samePosition(
+          [row, selectedColIndex],
+          this.playerSvc.getPosition(this.player)
+        )
+      ) {
         movePlayer = true;
       }
     }
 
     // Move player
     if (movePlayer) {
-      const [playerRowIndex, playerColIndex] = this.player.getPosition();
+      const [playerRowIndex, playerColIndex] = this.playerSvc.getPosition(
+        this.player
+      );
       const updatedRow =
         direction === 'up'
           ? rotateToNegative(playerRowIndex)
           : rotateToPositive(playerRowIndex);
 
-      this.player.updatePosition(updatedRow, playerColIndex);
+      this.playerSvc.updatePosition(this.player, updatedRow, playerColIndex);
     }
 
     // Update the room distribution
