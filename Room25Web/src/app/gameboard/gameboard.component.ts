@@ -1,12 +1,17 @@
-import { Component, ViewChildren, QueryList } from '@angular/core';
+import {
+  Component,
+  ViewChildren,
+  QueryList,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 
 import { RoomComponent } from '../room/room.component';
 import { PlayerComponent } from '../player/player.component';
 
 import { Action } from '../action.enum';
-import { rotateToNegative } from '../utils';
-import fromIndexToID, { samePosition, rotateToPositive } from '../utils';
+import fromIndexToID from '../utils';
 import { Room } from '../room/room.model';
 
 import { RoomService } from '../room/room.service';
@@ -27,6 +32,9 @@ export class GameboardComponent {
   // Enum
   Action = Action;
 
+  actionPhase: number = 0;
+
+  // Create player
   player: Player = {
     name: 'Frank',
     playerPos: {
@@ -35,9 +43,7 @@ export class GameboardComponent {
     },
 
     survived: true,
-    action1: Action.NONE,
-    action2: Action.NONE,
-    action3: Action.NONE,
+    actions: [Action.NONE, Action.NONE, Action.NONE],
   };
 
   // Game status
@@ -60,6 +66,8 @@ export class GameboardComponent {
   // The exact position to put arrow when dragging
   arrowPositions: ArrowPosition[] = [];
 
+  @Output() actionFinished: EventEmitter<number> = new EventEmitter<number>();
+
   constructor(
     private roomSvc: RoomService,
     private playerSvc: PlayerService,
@@ -77,12 +85,15 @@ export class GameboardComponent {
 
   // When receive confirmed action from plan board
   assignAction(event: Action[]) {
-    this.player.action1 = event[0];
-    this.player.action2 = event[1];
+    this.player.actions[0] = event[0];
+    this.player.actions[1] = event[1];
   }
 
   // When action selected
-  handleShowActionTarget(action: Action) {
+  handleShowActionTarget(actionNumber: number) {
+    const action = this.player.actions[actionNumber - 1];
+    this.actionPhase = actionNumber;
+
     switch (action) {
       case Action.MOVE:
       case Action.PEEK:
@@ -144,9 +155,11 @@ export class GameboardComponent {
         selectedAction
       );
 
-      // Change phase
+      // Change phase back
       this.selectingRoom = false;
     }
+
+    this.handleActionFinishPhase();
   }
 
   handleDrag(direction: 'left' | 'right' | 'up' | 'down') {
@@ -170,7 +183,14 @@ export class GameboardComponent {
           this.player,
           selectedDirection
         );
+        break;
     }
+
+    this.handleActionFinishPhase();
+  }
+
+  handleActionFinishPhase() {
+    this.actionFinished.emit(this.actionPhase);
   }
 
   localFromIndexToID(rowIndex: number, colIndex: number): number {

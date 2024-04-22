@@ -21,7 +21,7 @@ export class ActionplanComponent {
 
   private actionConfirmed: boolean = false;
 
-  private actionReady: boolean[] = [true, false, false];
+  private actionReady: boolean[] = [false, false, false];
   private actionFinished: boolean[] = [false, false, false];
   private action3Enabled: boolean = false;
 
@@ -30,6 +30,8 @@ export class ActionplanComponent {
   @Output() triggerActionConfirmed: EventEmitter<Action[]> = new EventEmitter<
     Action[]
   >();
+
+  @Output() triggerAction: EventEmitter<number> = new EventEmitter<number>();
 
   setEnableAction3(enabled: boolean): void {
     this.action3Enabled = enabled;
@@ -41,16 +43,30 @@ export class ActionplanComponent {
 
   // When click confirm, lock Action1 and Action2. Then emit
   confirmAction(): void {
+    // Set action to confirmed
     this.actionConfirmed = true;
     this.triggerActionConfirmed.emit([this.action1, this.action2]);
+
+    // Ready first action
+    this.setActionReady(1);
+    // Trigger action1
+    this.triggerAction.emit(1);
   }
 
   getActionConfirmed(): boolean {
     return this.actionConfirmed;
   }
 
+  setActionReady(actionNumber: number): void {
+    this.actionReady[actionNumber - 1] = true;
+  }
+
   getActionReady(actionNumber: number): boolean {
     return this.actionReady[actionNumber - 1];
+  }
+
+  setActionFinished(actionNumber: number): void {
+    this.actionFinished[actionNumber - 1] = true;
   }
 
   getActionFinished(actionNumber: number): boolean {

@@ -17,19 +17,28 @@
     <div class="column-display">
       <div class="left-column">
         <app-actionplan
+          #actionplan
           class="action-plan"
           (triggerActionConfirmed)="gameboard.assignAction($event)"
+          (triggerAction)="gameboard.handleShowActionTarget($event)"
         ></app-actionplan>
       </div>
       <div class="main-column">
-        <app-gameboard class="gameboard" #gameboard></app-gameboard>
+        <app-gameboard
+          class="gameboard"
+          #gameboard
+          (actionFinished)="
+            actionplan.setActionFinished($event);
+            actionplan.setActionReady($event + 1)
+          "
+        ></app-gameboard>
         <!-- <app-action-choose-board
           class="action-choose-board"
           (triggerActionChoose)="gameboard.handleShowActionTarget($event)"
         ></app-action-choose-board> -->
 
-        <p>Action1: {{ gameboard.player.action1 }}</p>
-        <p>Action2: {{ gameboard.player.action2 }}</p>
+        <p>Action1: {{ gameboard.player.actions[0] }}</p>
+        <p>Action2: {{ gameboard.player.actions[1] }}</p>
       </div>
     </div>
   </div>

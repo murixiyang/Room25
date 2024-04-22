@@ -7,7 +7,5 @@ export interface Player {
 
   survived: boolean;
 
-  action1: Action;
-  action2: Action;
-  action3: Action;
+  actions: Action[];
 }

@@ -1,4 +1,7 @@
-<div class="action-place" [ngClass]="{ 'with-border': getActionReady(1) }">
+<div
+  class="action-place"
+  [ngClass]="{ 'with-border': getActionReady(1) && !getActionFinished(1) }"
+>
   <p class="action-text">Action1: {{ action1 }}</p>
 
   <select
@@ -19,7 +22,10 @@
   </select>
 </div>
 
-<div class="action-place" [ngClass]="{ 'with-border': getActionReady(2) }">
+<div
+  class="action-place"
+  [ngClass]="{ 'with-border': getActionReady(2) && !getActionFinished(2) }"
+>
   <p class="action-text">Action2: {{ action2 }}</p>
 
   <select
