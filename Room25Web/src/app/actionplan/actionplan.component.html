@@ -2,13 +2,13 @@
   class="action-place"
   [ngClass]="{ 'with-border': getActionStatus(1) === ActionStatus.READY }"
 >
-  <p class="action-text">Action1: {{ action1 }}</p>
+  <p class="action-text">Action1: {{ actions[0] }}</p>
 
   <select
-    [(ngModel)]="action1"
+    [(ngModel)]="actions[0]"
     name="action1"
     class="action-selector"
-    [ngClass]="ActionClassMap[action1]"
+    [ngClass]="ActionClassMap[actions[0]]"
     [disabled]="getActionConfirmed()"
   >
     <option
@@ -26,13 +26,13 @@
   class="action-place"
   [ngClass]="{ 'with-border': getActionStatus(2) === ActionStatus.READY }"
 >
-  <p class="action-text">Action2: {{ action2 }}</p>
+  <p class="action-text">Action2: {{ actions[1] }}</p>
 
   <select
-    [(ngModel)]="action2"
+    [(ngModel)]="actions[1]"
     name="action2"
     class="action-selector"
-    [ngClass]="ActionClassMap[action2]"
+    [ngClass]="ActionClassMap[actions[1]]"
     [disabled]="getActionConfirmed()"
   >
     <option
@@ -50,7 +50,7 @@
   class="action-place"
   [ngClass]="{ 'with-border': getActionStatus(13) === ActionStatus.READY }"
 >
-  <p class="action-text">Action3: {{ action3 }}</p>
+  <p class="action-text">Action3: {{ actions[2] }}</p>
 
   <button
     class="enable-action"
@@ -63,11 +63,11 @@
 
   <select
     *ngIf="getAction3Enabled()"
-    [(ngModel)]="action3"
+    [(ngModel)]="actions[2]"
     name="action3"
     class="action-selector"
-    [ngClass]="ActionClassMap[action3]"
-    (change)="setEnableAction3(action3 !== Action.NONE)"
+    [ngClass]="ActionClassMap[actions[2]]"
+    (change)="setEnableAction3(actions[2] !== Action.NONE)"
     [disabled]="!getAction3Enabled()"
   >
     <option

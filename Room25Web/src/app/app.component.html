@@ -22,7 +22,7 @@
         <app-actionplan
           #actionplan
           class="action-plan"
-          (triggerActionConfirmed)="gameboard.assignAction($event)"
+          (triggerActionConfirmed)="gameboard.playerAssignAction($event)"
           (triggerAction)="gameboard.handleShowActionTarget($event)"
         ></app-actionplan>
       </div>
@@ -35,6 +35,7 @@
 
         <p>Action1: {{ gameboard.player.actions[0] }}</p>
         <p>Action2: {{ gameboard.player.actions[1] }}</p>
+        <p>selecting room: {{ gameboard.selectingRoom }}</p>
       </div>
     </div>
   </div>

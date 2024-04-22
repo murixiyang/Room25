@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from '@angular/core';
 import { Action } from '../action.enum';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -12,14 +18,12 @@ import { ActionStatus } from '../action-status.enum';
   templateUrl: './actionplan.component.html',
   styleUrl: './actionplan.component.css',
 })
-export class ActionplanComponent {
+export class ActionplanComponent implements OnChanges {
   ActionClassMap = ActionClassMap;
   Action = Action;
   ActionStatus = ActionStatus;
 
-  action1: Action = Action.NONE;
-  action2: Action = Action.NONE;
-  action3: Action = Action.NONE;
+  actions: Action[] = [Action.NONE, Action.NONE, Action.NONE];
 
   private actionConfirmed: boolean = false;
   private action3Enabled: boolean = false;
@@ -38,6 +42,10 @@ export class ActionplanComponent {
 
   @Output() triggerAction: EventEmitter<number> = new EventEmitter<number>();
 
+  ngOnChanges(changes: SimpleChanges): void {
+    throw new Error('Method not implemented.');
+  }
+
   setEnableAction3(enabled: boolean): void {
     this.action3Enabled = enabled;
   }
@@ -54,7 +62,7 @@ export class ActionplanComponent {
     this.actionConfirmed = true;
 
     console.log('ActionPlan Trigger: Action Confirmed');
-    this.triggerActionConfirmed.emit([this.action1, this.action2]);
+    this.triggerActionConfirmed.emit([this.actions[0], this.actions[1]]);
 
     this.executeAction(1);
   }
@@ -72,9 +80,7 @@ export class ActionplanComponent {
   }
 
   refreshAction() {
-    this.action1 = Action.NONE;
-    this.action2 = Action.NONE;
-    this.action3 = Action.NONE;
+    this.actions = [Action.NONE, Action.NONE, Action.NONE];
     this.actionStatus = [
       ActionStatus.EMPTY,
       ActionStatus.EMPTY,
@@ -106,7 +112,8 @@ export class ActionplanComponent {
   }
 
   getFilteredAction(forAction: 'action1' | 'action2'): Action[] {
-    const againstAction = forAction === 'action1' ? this.action2 : this.action1;
+    const againstAction =
+      forAction === 'action1' ? this.actions[1] : this.actions[0];
     const result = this.allActions.filter((action) => action !== againstAction);
     if (!result.includes(Action.NONE)) {
       result.push(Action.NONE);

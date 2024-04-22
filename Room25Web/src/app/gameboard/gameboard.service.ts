@@ -115,6 +115,7 @@ export class GameboardService {
     // Make neighbour room not transparent
     this.getNeighbourRooms(roomDistribution, player.playerPos).forEach(
       (room) => {
+        console.log('Neighbour: ' + room.id);
         // Get roomView
         const roomView = this.getRoomViewFromRoom(roomViews, room);
 

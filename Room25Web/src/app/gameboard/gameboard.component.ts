@@ -4,6 +4,7 @@ import {
   QueryList,
   Output,
   EventEmitter,
+  ViewChild,
 } from '@angular/core';
 import { NgFor, NgIf, NgClass } from '@angular/common';
 
@@ -61,6 +62,7 @@ export class GameboardComponent {
   roomDistribution: Room[][] = [];
   // To modify view of the rooms
   @ViewChildren(RoomComponent) roomViews!: QueryList<RoomComponent>;
+  @ViewChild(PlayerComponent) playerView!: PlayerComponent;
 
   // Whether the room of the position index is revealed
   // The exact position to put arrow when dragging
@@ -71,7 +73,6 @@ export class GameboardComponent {
 
   constructor(
     private roomSvc: RoomService,
-    private playerSvc: PlayerService,
     private gameboardSvc: GameboardService
   ) {
     // Randomly place rooms
@@ -85,14 +86,13 @@ export class GameboardComponent {
   }
 
   // When receive confirmed action from plan board
-  assignAction(event: Action[]) {
-    this.player.actions[0] = event[0];
-    this.player.actions[1] = event[1];
+  playerAssignAction(event: Action[]) {
+    this.playerView.assignAction(event);
   }
 
   // When action selected
   handleShowActionTarget(actionNumber: number) {
-    const action = this.player.actions[actionNumber - 1];
+    const action = this.playerView.player.actions[actionNumber - 1];
     this.actionPhase = actionNumber;
 
     switch (action) {
@@ -101,7 +101,7 @@ export class GameboardComponent {
         this.gameboardSvc.showAvailableRoomsForAction(
           this.roomDistribution,
           this.roomViews,
-          this.player
+          this.playerView.player
         );
 
         // Change phase
@@ -115,7 +115,7 @@ export class GameboardComponent {
         this.arrowPositions = this.gameboardSvc.showAvailableDirectionForAction(
           this.roomDistribution,
           this.roomViews,
-          this.player
+          this.playerView.player
         );
         break;
       default:
@@ -134,7 +134,7 @@ export class GameboardComponent {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
 
-    const selectedAction = this.player.actions[this.actionPhase - 1];
+    const selectedAction = this.playerView.player.actions[this.actionPhase - 1];
 
     const selectedRoom =
       this.roomDistribution[selectedRowIndex][selectedColIndex];
@@ -150,7 +150,7 @@ export class GameboardComponent {
       this.gameboardSvc.selectRoom(
         this.roomDistribution,
         this.roomViews,
-        this.player,
+        this.playerView.player,
         event,
         selectedAction
       );
@@ -171,7 +171,7 @@ export class GameboardComponent {
       case 'right':
         this.roomDistribution = this.gameboardSvc.dragRow(
           this.roomDistribution,
-          this.player,
+          this.playerView.player,
           selectedDirection
         );
         break;
@@ -179,7 +179,7 @@ export class GameboardComponent {
       case 'down':
         this.roomDistribution = this.gameboardSvc.dragCol(
           this.roomDistribution,
-          this.player,
+          this.playerView.player,
           selectedDirection
         );
         break;
