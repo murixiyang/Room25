@@ -189,6 +189,7 @@ export class GameboardComponent {
   }
 
   handleActionFinishPhase() {
+    console.log('Gameboard Trigger: Action finish');
     this.triggerActionFinished.emit(this.actionPhase);
   }
 

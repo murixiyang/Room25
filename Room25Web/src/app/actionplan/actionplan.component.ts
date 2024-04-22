@@ -53,6 +53,7 @@ export class ActionplanComponent {
     this.setActionStatus(2, ActionStatus.ASSIGNED);
     this.actionConfirmed = true;
 
+    console.log('ActionPlan Trigger: Action Confirmed');
     this.triggerActionConfirmed.emit([this.action1, this.action2]);
 
     this.executeAction(1);
@@ -63,7 +64,25 @@ export class ActionplanComponent {
     this.setActionReady(actionNumber);
 
     // Trigger action
+    console.log(
+      'ActionPlan Trigger: Action Start Execute, number: ',
+      actionNumber
+    );
     this.triggerAction.emit(actionNumber);
+  }
+
+  refreshAction() {
+    this.action1 = Action.NONE;
+    this.action2 = Action.NONE;
+    this.action3 = Action.NONE;
+    this.actionStatus = [
+      ActionStatus.EMPTY,
+      ActionStatus.EMPTY,
+      ActionStatus.EMPTY,
+    ];
+
+    this.actionConfirmed = false;
+    this.action3Enabled = false;
   }
 
   getActionConfirmed(): boolean {

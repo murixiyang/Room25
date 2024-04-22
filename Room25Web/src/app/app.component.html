@@ -13,8 +13,9 @@
       #timeline
       class="timeline"
       [player]="gameboard.player"
-      (triggerFinishAction)="actionplan.setActionReady($event)"
+      (triggerFinishAction)="actionplan.setActionFinished($event)"
       (triggerNextAction)="actionplan.executeAction($event)"
+      (triggerNextRound)="actionplan.refreshAction()"
     ></app-timeline>
     <div class="column-display">
       <div class="left-column">

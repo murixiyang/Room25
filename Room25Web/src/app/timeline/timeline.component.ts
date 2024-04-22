@@ -22,6 +22,7 @@ export class TimelineComponent {
     new EventEmitter<number>();
   @Output() triggerNextAction: EventEmitter<number> =
     new EventEmitter<number>();
+  @Output() triggerNextRound: EventEmitter<void> = new EventEmitter<void>();
 
   getTotalRound(): number {
     return this.totalRound;
@@ -40,17 +41,25 @@ export class TimelineComponent {
   }
 
   goToNextPhase(): number {
+    console.log('Timer Trigger: Phase end: ', this.currentPhase);
     this.triggerFinishAction.emit(this.currentPhase);
 
     if (this.currentPhase === 3) {
       this.currentPhase = 1;
       this.leftRound--;
       this.passedRound++;
+
+      console.log('Timer Trigger: Next round: ', this.leftRound);
+      this.triggerNextRound.emit();
       return this.currentPhase;
     } else {
       this.currentPhase++;
     }
 
+    console.log(
+      'Timer Trigger: Trigger next action. phase: ',
+      this.currentPhase
+    );
     this.triggerNextAction.emit(this.currentPhase);
 
     return this.currentPhase;
