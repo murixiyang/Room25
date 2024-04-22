@@ -67,6 +67,11 @@ export class ActionplanComponent {
 
   setActionFinished(actionNumber: number): void {
     this.actionFinished[actionNumber - 1] = true;
+    if (actionNumber === 1) {
+      // TODO: Change the logic later
+      this.setActionReady(2);
+      this.triggerAction.emit(2);
+    }
   }
 
   getActionFinished(actionNumber: number): boolean {

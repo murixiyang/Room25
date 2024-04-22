@@ -27,10 +27,7 @@
         <app-gameboard
           class="gameboard"
           #gameboard
-          (actionFinished)="
-            actionplan.setActionFinished($event);
-            actionplan.setActionReady($event + 1)
-          "
+          (actionFinished)="actionplan.setActionFinished($event)"
         ></app-gameboard>
         <!-- <app-action-choose-board
           class="action-choose-board"
