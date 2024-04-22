@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { PlayerComponent } from '../player/player.component';
 import { Player } from '../player/player.model';
 
@@ -18,6 +18,11 @@ export class TimelineComponent {
 
   @Input() player!: Player;
 
+  @Output() triggerFinishAction: EventEmitter<number> =
+    new EventEmitter<number>();
+  @Output() triggerNextAction: EventEmitter<number> =
+    new EventEmitter<number>();
+
   getTotalRound(): number {
     return this.totalRound;
   }
@@ -35,13 +40,18 @@ export class TimelineComponent {
   }
 
   goToNextPhase(): number {
+    this.triggerFinishAction.emit(this.currentPhase);
+
     if (this.currentPhase === 3) {
       this.currentPhase = 1;
       this.leftRound--;
       this.passedRound++;
+      return this.currentPhase;
     } else {
       this.currentPhase++;
     }
+
+    this.triggerNextAction.emit(this.currentPhase);
 
     return this.currentPhase;
   }

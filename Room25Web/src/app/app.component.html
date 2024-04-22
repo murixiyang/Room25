@@ -10,9 +10,11 @@
 <div class="gameboard-container">
   <div class="row-display">
     <app-timeline
+      #timeline
       class="timeline"
       [player]="gameboard.player"
-      #timeline
+      (triggerFinishAction)="actionplan.setActionReady($event)"
+      (triggerNextAction)="actionplan.executeAction($event)"
     ></app-timeline>
     <div class="column-display">
       <div class="left-column">
@@ -27,7 +29,7 @@
         <app-gameboard
           class="gameboard"
           #gameboard
-          (actionFinished)="actionplan.setActionFinished($event)"
+          (triggerActionFinished)="timeline.goToNextPhase()"
         ></app-gameboard>
 
         <p>Action1: {{ gameboard.player.actions[0] }}</p>

@@ -41,7 +41,7 @@ export class GameboardService {
           dangerousLevel: DangerousLevel.GREEN,
           lockStatus: LockStatus.AVAILABLE,
           id: id,
-          revealed: true,
+          revealed: false,
           selectable: false,
         };
 
@@ -115,7 +115,6 @@ export class GameboardService {
     // Make neighbour room not transparent
     this.getNeighbourRooms(roomDistribution, player.playerPos).forEach(
       (room) => {
-        console.log('Neighbour id: ', room.id);
         // Get roomView
         const roomView = this.getRoomViewFromRoom(roomViews, room);
 
@@ -146,8 +145,6 @@ export class GameboardService {
     roomViews: QueryList<RoomComponent>,
     player: Player
   ): ArrowPosition[] {
-    console.log('triggered');
-
     // Find the corresponding room component
     const rowIndex = player.playerPos.rowIndex;
     const colIndex = player.playerPos.colIndex;
@@ -188,7 +185,6 @@ export class GameboardService {
     if (rowIndex === 2) {
       arrowPositions[0].available = false;
       arrowPositions[1].available = false;
-      console.log('done');
     }
 
     if (colIndex === 2) {
@@ -217,13 +213,15 @@ export class GameboardService {
     );
 
     // If move/push into an unrevealed room, reveal it
-    // if (
-    //   !this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] &&
-    //   (selectedAction === Action.MOVE || selectedAction === Action.PUSH)
-    // ) {
-    //   this.roomRevealed[fromIndexToID(selectedRowIndex, selectedColIndex)] =
-    //     true;
-    // }
+    if (
+      !roomDistribution[selectedPosition.rowIndex][selectedPosition.colIndex]
+        .revealed &&
+      (selectedAction === Action.MOVE || selectedAction === Action.PUSH)
+    ) {
+      roomDistribution[selectedPosition.rowIndex][
+        selectedPosition.colIndex
+      ].revealed = true;
+    }
 
     // Perform room action
 
@@ -276,14 +274,12 @@ export class GameboardService {
       const playerRowIndex = player.playerPos.rowIndex;
       const playerColIndex = player.playerPos.colIndex;
 
-      console.log('Current: ', playerRowIndex, playerColIndex);
       const updatedCol =
         direction === 'left'
           ? rotateToNegative(playerColIndex)
           : rotateToPositive(playerColIndex);
 
       this.playerSvc.updatePosition(player, playerRowIndex, updatedCol);
-      console.log('Update: ', playerRowIndex, updatedCol);
     }
 
     // Update the room distribution
@@ -352,7 +348,6 @@ export class GameboardService {
     const selectedRowIndex = selectedPosition.rowIndex;
     const selectedColIndex = selectedPosition.colIndex;
 
-    console.log('Get neighbour of: ' + selectedPosition);
     // Filter room components to find neighbor rooms
     return roomDistribution.flat().filter((room) => {
       const roomPosition = room.roomPos;

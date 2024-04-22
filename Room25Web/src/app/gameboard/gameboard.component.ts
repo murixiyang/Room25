@@ -66,7 +66,8 @@ export class GameboardComponent {
   // The exact position to put arrow when dragging
   arrowPositions: ArrowPosition[] = [];
 
-  @Output() actionFinished: EventEmitter<number> = new EventEmitter<number>();
+  @Output() triggerActionFinished: EventEmitter<number> =
+    new EventEmitter<number>();
 
   constructor(
     private roomSvc: RoomService,
@@ -118,6 +119,7 @@ export class GameboardComponent {
         );
         break;
       default:
+        this.handleActionFinishPhase();
         break;
     }
   }
@@ -132,9 +134,7 @@ export class GameboardComponent {
     const selectedRowIndex = event.rowIndex;
     const selectedColIndex = event.colIndex;
 
-    const selectedAction = Action.MOVE;
-
-    console.log(`Clicked room (${selectedRowIndex}, ${selectedColIndex})`);
+    const selectedAction = this.player.actions[this.actionPhase - 1];
 
     const selectedRoom =
       this.roomDistribution[selectedRowIndex][selectedColIndex];
@@ -166,7 +166,6 @@ export class GameboardComponent {
     const selectedDirection = direction;
     // Clear arrow
     this.arrowPositions = [];
-    console.log(selectedDirection);
     switch (selectedDirection) {
       case 'left':
       case 'right':
@@ -190,7 +189,7 @@ export class GameboardComponent {
   }
 
   handleActionFinishPhase() {
-    this.actionFinished.emit(this.actionPhase);
+    this.triggerActionFinished.emit(this.actionPhase);
   }
 
   localFromIndexToID(rowIndex: number, colIndex: number): number {

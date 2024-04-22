@@ -3,6 +3,7 @@ import { Action } from '../action.enum';
 import { NgClass, NgFor, NgIf } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActionClassMap } from '../action.enum';
+import { ActionStatus } from '../action-status.enum';
 
 @Component({
   selector: 'app-actionplan',
@@ -14,16 +15,20 @@ import { ActionClassMap } from '../action.enum';
 export class ActionplanComponent {
   ActionClassMap = ActionClassMap;
   Action = Action;
+  ActionStatus = ActionStatus;
 
   action1: Action = Action.NONE;
   action2: Action = Action.NONE;
   action3: Action = Action.NONE;
 
   private actionConfirmed: boolean = false;
-
-  private actionReady: boolean[] = [false, false, false];
-  private actionFinished: boolean[] = [false, false, false];
   private action3Enabled: boolean = false;
+
+  private actionStatus: ActionStatus[] = [
+    ActionStatus.EMPTY,
+    ActionStatus.EMPTY,
+    ActionStatus.EMPTY,
+  ];
 
   allActions: Action[] = Object.values(Action);
 
@@ -44,38 +49,41 @@ export class ActionplanComponent {
   // When click confirm, lock Action1 and Action2. Then emit
   confirmAction(): void {
     // Set action to confirmed
+    this.setActionStatus(1, ActionStatus.ASSIGNED);
+    this.setActionStatus(2, ActionStatus.ASSIGNED);
     this.actionConfirmed = true;
+
     this.triggerActionConfirmed.emit([this.action1, this.action2]);
 
-    // Ready first action
-    this.setActionReady(1);
-    // Trigger action1
-    this.triggerAction.emit(1);
+    this.executeAction(1);
+  }
+
+  executeAction(actionNumber: number) {
+    // Ready action
+    this.setActionReady(actionNumber);
+
+    // Trigger action
+    this.triggerAction.emit(actionNumber);
   }
 
   getActionConfirmed(): boolean {
     return this.actionConfirmed;
   }
 
-  setActionReady(actionNumber: number): void {
-    this.actionReady[actionNumber - 1] = true;
+  setActionStatus(actionNumber: number, status: ActionStatus): void {
+    this.actionStatus[actionNumber - 1] = status;
   }
 
-  getActionReady(actionNumber: number): boolean {
-    return this.actionReady[actionNumber - 1];
+  setActionReady(actionNumber: number): void {
+    this.actionStatus[actionNumber - 1] = ActionStatus.READY;
   }
 
   setActionFinished(actionNumber: number): void {
-    this.actionFinished[actionNumber - 1] = true;
-    if (actionNumber === 1) {
-      // TODO: Change the logic later
-      this.setActionReady(2);
-      this.triggerAction.emit(2);
-    }
+    this.actionStatus[actionNumber - 1] = ActionStatus.FINISHED;
   }
 
-  getActionFinished(actionNumber: number): boolean {
-    return this.actionFinished[actionNumber - 1];
+  getActionStatus(actionNumber: number): ActionStatus {
+    return this.actionStatus[actionNumber - 1];
   }
 
   getFilteredAction(forAction: 'action1' | 'action2'): Action[] {
